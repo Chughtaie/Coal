@@ -6,7 +6,7 @@
 ;coal
 ;mannu
 ;Haan maanu k bachay
-
+;how are you jaan
 
 displaycharacter macro char
 	call pushaa
