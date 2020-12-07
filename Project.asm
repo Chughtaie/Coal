@@ -7,6 +7,9 @@
 ;mannu
 ;Haan maanu k bachay
 ;how are you jaan
+;II AMAM FINEFINE
+
+
 
 displaycharacter macro char
 	call pushaa
