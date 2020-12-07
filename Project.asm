@@ -8,7 +8,7 @@
 ;Haan maanu k bachay
 ;how are you jaan
 ;II AMAM FINEFINE
-
+;So lets start working on discrete...shall we?
 
 
 displaycharacter macro char
