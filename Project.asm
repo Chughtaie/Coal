@@ -4,6 +4,7 @@
 ;are you ready?
 ;is it working?
 ;coal
+;mannu
 displaycharacter macro char
 	call pushaa
 	mov  ah,9      		; write character/attribute
