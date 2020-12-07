@@ -2,6 +2,8 @@
 ;lesgo
 ;Lets Rocksssgg
 ;are you ready?
+;is it working?
+;coal
 displaycharacter macro char
 	call pushaa
 	mov  ah,9      		; write character/attribute
