@@ -5,6 +5,9 @@
 ;is it working?
 ;coal
 ;mannu
+;Haan maanu k bachay
+
+
 displaycharacter macro char
 	call pushaa
 	mov  ah,9      		; write character/attribute
