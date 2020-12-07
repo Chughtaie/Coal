@@ -1,6 +1,6 @@
 
 
-;Lets Rock
+;Lets Rocks
 
 displaycharacter macro char
 	call pushaa
