@@ -9,6 +9,8 @@
 ;how are you jaan
 ;II AMAM FINEFINE
 ;So lets start working on discrete...shall we?
+;ahad is here
+
 
 
 displaycharacter macro char
