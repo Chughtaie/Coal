@@ -132,6 +132,9 @@ drawbox 10111101b,25,26,4,8
 	call displayl1
 	drawm oc1,oc2,or1,or2
 	
+	
+
+	
 l1:
 
 	
@@ -146,26 +149,9 @@ l1:
 	; jz l1
 	mov ah,0
 	int 16h
-	.if ah==04Dh || ah==20h;right	
-	call clearscreen
-	call displayl1
-	add or1,2
-	add or2,2
-	;inc marioc1
-	;inc marioc2
-	;inc marior1
-	;inc marior2
-	drawm oc1,oc2,or1,or2
-	;inc c1
-	;inc c2
-	
-	.elseif ah==48h || ah==11h	
-	call up
-	
-	
-	.elseif ah==1
-	call clearscreen
-	jmp exit
+	call move
+	.if ah==-1
+		jmp exit
 	.endif
 	;call clearscreen
 	;drawm c1,c2,r1,r2
@@ -176,6 +162,7 @@ l1:
 	jmp l1
 	
 exit:	
+LOL:
 ; .endw	
 	;Gotoxy 0,0
 	;character
@@ -188,6 +175,41 @@ INT 21h
 main endp
 
 
+Move proc
+	
+	.if ah==04Dh || ah==20h;right,D
+	call clearscreen
+	call displayl1
+	add or1,2
+	add or2,2
+	;inc marioc1
+	;inc marioc2
+	;inc marior1
+	;inc marior2
+	drawm oc1,oc2,or1,or2
+	;inc c1
+	;inc c2
+	
+	.elseif ah==4Bh || ah==1Eh	;left,A
+	
+	
+	
+	
+	.elseif ah==48h || ah==11h	;Up,W	
+
+	call up
+	
+	.elseif ah==50h || ah==1Fh	;Down,S	
+	
+	.elseif ah==1
+	call clearscreen
+	mov ah,-1
+	;jmp LOL
+	.endif
+	
+	
+	ret
+move endp
 
 up proc
 
