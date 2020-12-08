@@ -192,7 +192,16 @@ Move proc
 	
 	.elseif ah==4Bh || ah==1Eh	;left,A
 	
-	
+	call clearscreen
+	call displayl1
+	sub or1,2
+	sub or2,2
+	;inc marioc1
+	;inc marioc2
+	;inc marior1
+	;inc marior2
+	drawm oc1,oc2,or1,or2
+
 	
 	
 	.elseif ah==48h || ah==11h	;Up,W	
