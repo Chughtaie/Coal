@@ -138,11 +138,6 @@ drawbox 10111101b,25,26,4,8
 l1:
 
 	
-	
-;call drawline
-	
-	;call displayl1
-	
 	mov ah,1
 	int 16h
 	
@@ -216,24 +211,41 @@ move endp
 
 
 rightmov proc
-.if or1>0 && or1<13 || or1>19 && or1 < 30 || or1>37 && or1<48 || or1> 54 && or1<61 || or1>67
+.if oc2 > 21 && ( or1>0 && or1<13 ) || ( or1>19 && or1 < 30) || (or1>37 && or1<48) || (or1> 54 && or1<61 )|| or1>67
 	call clearscreen
 	call displayl1
 	add or1,2
 	add or2,2
 	drawm oc1,oc2,or1,or2
+
+; .elseif oc2 < 19 && (or1 >=12 && or1 <= 24 || or1 >=29 && or1 <= 42 || or1 >=49 && or1 <= 57) 
+	; call clearscreen
+	; call displayl1
+	; add or1,2
+	; add or2,2
+	; .if( or1 >= 21 && or1 <= 24) || (or1 >=39  && or1<=42) || (or1 >= 54 && or1<=57) || (or1 >= 67 && or1<=70)
+		; add oc1,8
+		; add oc2,8
+	; .endif
+	; drawm oc1,oc2,or1,or2
+	
 .endif
 ret
 rightmov endp
 
 
+
+
+
 leftmov proc
-.if or1>5 && or1<15 || or1>23 && or1 < 33 || or1>41 && or1<50 || or1> 57 && or1<66 || or1>70
+.if  oc2 > 22 && or1>5 && or1<15 || or1>23 && or1 < 33 || or1>41 && or1<50 || or1> 57 && or1<66 || or1>70
 call clearscreen
 	call displayl1
 	sub or1,2
 	sub or2,2
 	drawm oc1,oc2,or1,or2
+	
+	
 .endif
 
 ret
@@ -264,14 +276,30 @@ mov var,6
 	
 call clearscreen
 call displayl1
-add oc1,8
-add oc2,8
-;add or1,2
-;add or2,2	
+
+call detectup
+; add oc1,8
+; add oc2,8
+
 drawm oc1,oc2,or1,or2
 		
 ret 
 up endp
+
+;====================================================================================
+detectup proc
+
+; .if or1 >= 17 && or1 <= 20 || or1 >= 34 && or1<=37 || or1 >= 51 && or1<=54 || or1 >= 64 && or1<=68
+; jmp eeend
+;.endif
+add oc1,8
+add oc2,8
+
+; eeend:
+
+ret
+detectup endp
+
 
 displayl1 proc
 	;flag
