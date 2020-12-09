@@ -132,6 +132,9 @@ drawbox 10111101b,25,26,4,8
 	call displayl1
 	drawm oc1,oc2,or1,or2
 	
+	
+
+	
 l1:
 
 	
@@ -146,26 +149,9 @@ l1:
 	; jz l1
 	mov ah,0
 	int 16h
-	.if ah==04Dh || ah==20h;right	
-	call clearscreen
-	call displayl1
-	add or1,2
-	add or2,2
-	;inc marioc1
-	;inc marioc2
-	;inc marior1
-	;inc marior2
-	drawm oc1,oc2,or1,or2
-	;inc c1
-	;inc c2
-	
-	.elseif ah==48h || ah==11h	
-	call up
-	
-	
-	.elseif ah==1
-	call clearscreen
-	jmp exit
+	call move
+	.if ah==-1
+		jmp exit
 	.endif
 	;call clearscreen
 	;drawm c1,c2,r1,r2
@@ -176,6 +162,7 @@ l1:
 	jmp l1
 	
 exit:	
+LOL:
 ; .endw	
 	;Gotoxy 0,0
 	;character
@@ -186,6 +173,71 @@ MOV AH,4CH
 INT 21h
 
 main endp
+
+
+Move proc
+	
+	.if ah==04Dh || ah==20h;right,D
+	
+	; call clearscreen
+	; call displayl1
+	; add or1,2
+	; add or2,2
+	
+	; drawm oc1,oc2,or1,or2
+	call rightmov
+	
+	.elseif ah==4Bh || ah==1Eh	;left,A
+	
+	call leftmov
+	; call clearscreen
+	; call displayl1
+	; sub or1,2
+	; sub or2,2
+	; drawm oc1,oc2,or1,or2
+
+	
+	
+	.elseif ah==48h || ah==11h	;Up,W	
+
+	call up
+	
+	.elseif ah==50h || ah==1Fh	;Down,S	
+	
+	.elseif ah==1
+	call clearscreen
+	mov ah,-1
+	;jmp LOL
+	.endif
+	
+	
+	ret
+move endp
+
+
+rightmov proc
+.if or1>0 && or1<13 || or1>19 && or1 < 30 || or1>37 && or1<48 || or1> 54 && or1<61 || or1>67
+	call clearscreen
+	call displayl1
+	add or1,2
+	add or2,2
+	drawm oc1,oc2,or1,or2
+.endif
+ret
+rightmov endp
+
+
+leftmov proc
+.if or1>5 && or1<15 || or1>23 && or1 < 33 || or1>41 && or1<50 || or1> 57 && or1<66 || or1>70
+call clearscreen
+	call displayl1
+	sub or1,2
+	sub or2,2
+	drawm oc1,oc2,or1,or2
+.endif
+
+ret
+leftmov endp
 
 
 
@@ -307,7 +359,7 @@ push dx
 
 mov cx,1000
 mydelay:
-mov bx,873      ;; increase this number if you want to add more delay, and decrease this number if you want to reduce delay.
+mov bx,600      ;; increase this number if you want to add more delay, and decrease this number if you want to reduce delay.
 mydelay1:
 dec bx
 jnz mydelay1
