@@ -31,8 +31,23 @@ add marior2,3
 	drawbox 11111101b,marioc1,marioc2,marior1,marior2
 	;ret
 endm
+;----------------------------------------------------------------------------
+drawenemy macro a,b
+mov al,a
+mov bl,b
+mov en1r1,al
+mov en1r2,bl
+
+drawbox 11110101b,23,24,en1r1,en1r2
 
 
+	
+
+
+
+
+endm
+;------------------------------------------------------------------------------
 
 displaycharacter macro char
 	call pushaa
@@ -93,6 +108,15 @@ endm
 	chj db '*$'
 	count db 0
 	var db 0
+en1r1 db 0
+en1r2 db 0	
+
+er1 db 20
+er2 db 21
+
+counte1 db 0
+counte2 db 0
+	
 oc1 db 22
 oc2 db 23
 or1 db 4
@@ -101,6 +125,7 @@ marioc1 db 0
 marioc2 db 0
 marior1 db 0
 marior2 db 0
+lvl db 1
 
 
 
@@ -148,6 +173,9 @@ l1:
 	.if ah==-1
 		jmp exit
 	.endif
+	.if or2 >75
+	call main2
+	.endif
 	;call clearscreen
 	;drawm c1,c2,r1,r2
 	;inc c1
@@ -168,6 +196,108 @@ MOV AH,4CH
 INT 21h
 
 main endp
+
+
+
+main2 proc
+  mov ax,0
+  mov ax,0
+  mov lvl,2
+; .while ah!=1
+call clearscreen
+
+drawbox 10111101b,25,26,4,8
+ ;drawm c1,c2,r1,r2
+	;add r1,5
+	;add r2,5
+;mov cx,2
+mov oc1, 22
+mov oc2,23
+mov or1,4
+mov or2,5
+	call clearscreen
+	call display2
+	drawm oc1,oc2,or1,or2
+	
+	
+
+	
+l2:
+
+	
+	mov ah,1
+	int 16h
+	
+	; jz l1
+	mov ah,0
+	int 16h
+	call move
+	.if ah==-1
+		jmp exit2
+	.endif
+	;call clearscreen
+	;drawm c1,c2,r1,r2
+	;inc c1
+	;inc c2
+	;add r1,5
+	;add r2,
+	jmp l2
+	
+exit2:	
+LOL2:
+; .endw	
+	;Gotoxy 0,0
+	;character
+
+
+
+MOV AH,4CH
+INT 21h
+ret
+
+
+
+
+
+
+
+
+
+main2 endp
+
+
+enemymov proc
+
+
+.if counte1<=5			
+		
+			add er1,2
+			add er2,2
+			inc counte1
+			;call clearscreen
+drawbox 11110101b,23,24,er1,er2
+		
+		
+ .elseif  counte2<=5
+			.if counte2==5
+			mov counte1,1
+			mov counte2,0
+			.endif
+			;call delay2
+			sub er1,2
+			sub er2,2
+		inc counte2
+			drawbox 11110101b,23,24,er1,er2
+		
+		
+	.endif
+
+
+enemymov endp
+
+
+
+
 
 
 Move proc
@@ -211,24 +341,42 @@ move endp
 
 
 rightmov proc
-.if oc2 > 21 && ( or1>0 && or1<13 ) || ( or1>19 && or1 < 30) || (or1>37 && or1<48) || (or1> 54 && or1<61 )|| or1>67
+.if oc2 > 21 &&  or1>0 && or1<13  ||  or1>19 && or1 < 30 || or1>37 && or1<48 || or1> 54 && or1<61 || or1>67
 	call clearscreen
+	.if lvl==1
 	call displayl1
+	.endif
+	.if lvl==2
+	call display2
+	.endif
 	add or1,2
 	add or2,2
 	drawm oc1,oc2,or1,or2
+.if lvl==2
+	call enemymov
+	.endif
 
-; .elseif oc2 < 19 && (or1 >=12 && or1 <= 24 || or1 >=29 && or1 <= 42 || or1 >=49 && or1 <= 57) 
-	; call clearscreen
-	; call displayl1
-	; add or1,2
-	; add or2,2
-	; .if( or1 >= 21 && or1 <= 24) || (or1 >=39  && or1<=42) || (or1 >= 54 && or1<=57) || (or1 >= 67 && or1<=70)
-		; add oc1,8
-		; add oc2,8
-	; .endif
-	; drawm oc1,oc2,or1,or2
-	
+
+.elseif oc2 < 19 && or1 >=12 && or1 <= 24 || or1 >=29 && or1 <= 42 || or1 >=49 && or1 <= 57 
+	call clearscreen
+	.if lvl==1
+	call displayl1
+	.endif
+	.if lvl==2
+	call display2
+
+
+	.endif
+	add or1,2
+	add or2,2
+	.if or1 >= 21 && or1 <= 24 || (or1 >=39  && or1<=42) || (or1 >= 54 && or1<=57) || (or1 >= 67 && or1<=70)
+		add oc1,8
+		add oc2,8
+	.endif
+	drawm oc1,oc2,or1,or2
+	.if lvl==2
+	call enemymov
+	.endif
 .endif
 ret
 rightmov endp
@@ -240,11 +388,20 @@ rightmov endp
 leftmov proc
 .if  oc2 > 22 && or1>5 && or1<15 || or1>23 && or1 < 33 || or1>41 && or1<50 || or1> 57 && or1<66 || or1>70
 call clearscreen
+	.if lvl==1
 	call displayl1
+	.endif
+	.if lvl==2
+	call display2
+
+	.endif
 	sub or1,2
 	sub or2,2
 	drawm oc1,oc2,or1,or2
-	
+	.if lvl==2
+	call enemymov
+	.endif
+
 	
 .endif
 
@@ -265,23 +422,40 @@ mov var,6
 	jumpp:
 		call delay
 		call clearscreen
-		call displayl1
+		.if lvl==1
+	call displayl1
+	.endif
+	.if lvl==2
+	call display2
+	.endif
 		add or1,2
 		add or2,2	
 		drawm oc1,oc2,or1,or2
+	.if lvl==2
+	call enemymov
+	.endif
+
 		dec var
 	.if var>0
 	jmp jumpp
 	.endif
 	
 call clearscreen
-call displayl1
+.if lvl==1
+	call displayl1
+	.endif
+	.if lvl==2
+	call display2
+	.endif
 
 call detectup
 ; add oc1,8
 ; add oc2,8
 
 drawm oc1,oc2,or1,or2
+	.if lvl==2
+	call enemymov
+	.endif
 		
 ret 
 up endp
@@ -289,13 +463,13 @@ up endp
 ;====================================================================================
 detectup proc
 
-; .if or1 >= 17 && or1 <= 20 || or1 >= 34 && or1<=37 || or1 >= 51 && or1<=54 || or1 >= 64 && or1<=68
-; jmp eeend
-;.endif
+.if or1 >= 17 && or1 <= 20 || or1 >= 34 && or1<=37 || or1 >= 51 && or1<=54 || or1 >= 64 && or1<=68
+jmp eeend
+.endif
 add oc1,8
 add oc2,8
 
-; eeend:
+eeend:
 
 ret
 detectup endp
@@ -324,6 +498,38 @@ displayl1 proc
 	;---------------------------------
 
 displayl1 endp
+
+
+
+display2 proc
+;flag
+	drawbox 01111111b,0,24,78,78
+	drawbox 11101111b,0,3,66,77
+ 
+ 
+		;obstacles
+	drawbox 01001111b,19,24,18,19
+	drawbox 11101111b,18,19,17,20
+
+	drawbox 01001111b,18,24,35,36
+	drawbox 11101111b,17,18,34,37
+
+
+
+	drawbox 01001111b,19,24,52,53
+	drawbox 11101111b,18,19,51,54
+
+
+	drawbox 11101111b,23,24,65,67
+	
+	;drawenemy 22,23
+	
+	ret
+	;---------------------------------
+	
+display2 endp
+
+
 
 comment&
 drawmario proc
@@ -402,6 +608,34 @@ pop ax
 ret
 
 delay endp
+
+
+delay2 proc
+
+
+push ax
+push bx
+push cx
+push dx
+
+mov cx,1000
+mydelay:
+mov bx,200      ;; increase this number if you want to add more delay, and decrease this number if you want to reduce delay.
+mydelay1:
+dec bx
+jnz mydelay1
+loop mydelay
+
+
+pop dx
+pop cx
+pop bx
+pop ax
+
+ret
+
+delay2 endp
+
 
 
 
