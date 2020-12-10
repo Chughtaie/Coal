@@ -121,6 +121,7 @@ oc1 db 22
 oc2 db 23
 or1 db 4
 or2 db 5
+subb db ?
 marioc1 db 0
 marioc2 db 0
 marior1 db 0
@@ -292,7 +293,7 @@ drawbox 11110101b,23,24,er1,er2
 		
 	.endif
 
-
+ret
 enemymov endp
 
 
@@ -311,15 +312,25 @@ Move proc
 	
 	; drawm oc1,oc2,or1,or2
 	call rightmov
+	; mov bl,or1
+	; sub cl,er1
+	; mov subb,bl
+	; .if bl==er1 || bl==er2 || cl<=1 && cl>=-1
+	; call clearscreen
+	; mov ah,-1	
+	;.endif
 	
 	.elseif ah==4Bh || ah==1Eh	;left,A
 	
 	call leftmov
+	; mov bl,or1
+	; sub cl,er1
+	; mov subb,bl
+	; .if bl==er1 || bl==er2 || cl<=1 && cl>=-1
 	; call clearscreen
-	; call displayl1
-	; sub or1,2
-	; sub or2,2
-	; drawm oc1,oc2,or1,or2
+	; mov ah,-1	
+	; .endif
+	
 
 	
 	
