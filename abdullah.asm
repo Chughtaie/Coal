@@ -39,13 +39,6 @@ mov en1r1,al
 mov en1r2,bl
 
 drawbox 11110101b,23,24,en1r1,en1r2
-
-
-	
-
-
-
-
 endm
 ;------------------------------------------------------------------------------
 
@@ -255,38 +248,29 @@ LOL2:
 MOV AH,4CH
 INT 21h
 ret
-
-
-
-
-
-
-
-
-
 main2 endp
 
 
 enemymov proc
 
 
-.if counte1<=5			
+.if counte1<=10			
 		
-			add er1,2
-			add er2,2
+			add er1,1
+			add er2,1
 			inc counte1
 			;call clearscreen
 drawbox 11110101b,23,24,er1,er2
 		
 		
- .elseif  counte2<=5
-			.if counte2==5
+ .elseif  counte2<=10
+			.if counte2==10
 			mov counte1,1
 			mov counte2,0
 			.endif
 			;call delay2
-			sub er1,2
-			sub er2,2
+			sub er1,1
+			sub er2,1
 		inc counte2
 			drawbox 11110101b,23,24,er1,er2
 		
@@ -350,6 +334,13 @@ Move proc
 	ret
 move endp
 
+endgame proc
+call clearscreen
+mov ah, 4ch
+int 21h
+ret
+
+endgame endp
 
 rightmov proc
 .if oc2 > 21 &&  or1>0 && or1<13  ||  or1>19 && or1 < 30 || or1>37 && or1<48 || or1> 54 && or1<61 || or1>67
@@ -375,8 +366,6 @@ rightmov proc
 	.endif
 	.if lvl==2
 	call display2
-
-
 	.endif
 	add or1,2
 	add or2,2
@@ -387,8 +376,10 @@ rightmov proc
 	drawm oc1,oc2,or1,or2
 	.if lvl==2
 	call enemymov
+	;call collision
 	.endif
 .endif
+call collision
 ret
 rightmov endp
 
@@ -411,11 +402,12 @@ call clearscreen
 	drawm oc1,oc2,or1,or2
 	.if lvl==2
 	call enemymov
+	;call collision
 	.endif
 
 	
 .endif
-
+call collision
 ret
 leftmov endp
 
@@ -484,6 +476,39 @@ eeend:
 
 ret
 detectup endp
+
+
+collision proc
+
+mov bl,er1
+;sub bl,or1
+ 
+.if bl == or1
+call endgame
+.endif
+sub bl,1
+.if bl == or1
+call endgame
+.endif
+add bl,2
+.if bl == or1
+call endgame
+.endif
+
+mov dl,er1
+add dl,48
+mov ah,2
+int 21h
+mov dl,or1
+add dl,48
+mov ah,2
+int 21h
+ret
+collision endp
+
+
+
+
 
 
 displayl1 proc
