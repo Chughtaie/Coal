@@ -53,11 +53,11 @@ add en1c1,3
 add en1c2,3
 sub en1r2,3	
 	
-	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
+	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2	;left leg
 add en1r1,3
 add en1r2,3	
 	
-	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
+	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2	;right leg
 
 
 
@@ -132,7 +132,8 @@ en1c1 db ?
 en1c2 db ?
 counte1 db 0
 counte2 db 0
-	
+	msg db "CONGRATS!!! YOU WON$"
+
 oc1 db 22
 oc2 db 23
 or1 db 4
@@ -315,6 +316,9 @@ l3:
 	.if ah==-1
 		jmp exit3
 	.endif
+	.if or2 >75
+	call wingame
+	.endif
 	;call clearscreen
 	;drawm c1,c2,r1,r2
 	;inc c1
@@ -460,28 +464,28 @@ rightmov proc
 	.endif
 
 
-.elseif oc2 < 19 && or1 >=12 && or1 <= 24 || or1 >=29 && or1 <= 42 || or1 >=49 && or1 <= 57 
-	call clearscreen
-	.if lvl==1
-	call displayl1
-	.endif
-	.if lvl==2
-	call display2
-	.endif
-	.if lvl==3
-	call display3
-	.endif
-	add or1,2
-	add or2,2
-	.if or1 >= 21 && or1 <= 24 || (or1 >=39  && or1<=42) || (or1 >= 54 && or1<=57) || (or1 >= 67 && or1<=70)
-		add oc1,8
-		add oc2,8
-	.endif
-	drawm oc1,oc2,or1,or2
-	.if lvl==2|| lvl==3
-	call enemymov
-	;call collision
-	.endif
+; .elseif oc2 < 19 && or1 >=12 && or1 <= 24 || or1 >=29 && or1 <= 42 || or1 >=49 && or1 <= 57 
+	; call clearscreen
+	; .if lvl==1
+	; call displayl1
+	; .endif
+	; .if lvl==2
+	; call display2
+	; .endif
+	; .if lvl==3
+	; call display3
+	; .endif
+	; add or1,2
+	; add or2,2
+	; .if or1 >= 21 && or1 <= 24 || (or1 >=39  && or1<=42) || (or1 >= 54 && or1<=57) || (or1 >= 67 && or1<=70)
+		; add oc1,8
+		; add oc2,8
+	; .endif
+	; drawm oc1,oc2,or1,or2
+	; .if lvl==2|| lvl==3
+	; call enemymov
+	;;call collision
+	; .endif
 .endif
 call collision
 ret
@@ -592,33 +596,77 @@ detectup endp
 
 collision proc
 
-mov bl,er1
-;sub bl,or1
+.if lvl==2 || lvl==4
+	mov bl,er1
+mov al,er2
  
-.if bl == or1
-call endgame
-.endif
-sub bl,1
-.if bl == or1
-call endgame
-.endif
-add bl,2
-.if bl == or1
-call endgame
+	.if bl == or1 || al==or1
+		call endgame
+	.endif
+	sub bl,1
+	sub al,1
+	.if bl == or1 || al==or1
+		call endgame
+	.endif
+	add bl,2
+	add al,2
+	.if bl == or1 || al==or1
+		call endgame
+	.endif
+	add bl,1
+	add bl,1
+	.if bl == or1 || al==or1
+		call endgame
+	.endif
+	sub bl,4
+	sub al,4
+	.if bl == or1  || al==or1
+		call endgame
+	.endif
+
+; mov dl,er1
+; add dl,48
+; mov ah,2
+; int 21h
+; mov dl,or1
+; add dl,48
+; mov ah,2
+; int 21h
 .endif
 
-mov dl,er1
-add dl,48
-mov ah,2
-int 21h
-mov dl,or1
-add dl,48
-mov ah,2
-int 21h
 ret
 collision endp
 
+wingame proc
 
+mov ah,06
+mov al,0
+;mov cx,0
+mov ch,0	;c1
+mov cl,00	;r1
+mov dh,30	;c1
+mov dl,79	;r2
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,12
+mov dl,30
+int 10h
+lea dx,msg
+mov ah,09
+int 21h
+
+
+mov dh,12
+mov dl,30
+int 10h 
+
+ret
+
+
+wingame endp
 
 
 
@@ -979,7 +1027,7 @@ pop ax
 	pop cx
 	pop dx
 	ret
-popaa endp
+popaa endp 
 
 
 
