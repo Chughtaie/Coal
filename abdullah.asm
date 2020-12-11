@@ -64,6 +64,22 @@ add en1r2,3
 endm
 ;------------------------------------------------------------------------------
 
+drawbigenemy macro a,b,c,d
+mov al,a
+mov en1c1 , al
+mov al,b
+mov en1c2 , al
+mov al,c
+mov en1r1 , al
+mov al,d
+mov en1r2, al
+
+	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+
+
+endm
+
+
 displaycharacter macro char
 	call pushaa
 	mov  ah,9      		; write character/attribute
@@ -133,12 +149,20 @@ en1c2 db ?
 counte1 db 0
 counte2 db 0
 	msg db "CONGRATS!!! YOU WON$"
-
+	msglost db "YOU LOST!!!LOSER...$"
+	enterr db "ENTER YOUR NAME : $"
+	welcome db "WELCOME TO SUPER MARIO$"
+	press db "Press any key to contine...$"
+bc1 db 1
+bc2 db 2
+br1 db 65	
+br2 db 69
 oc1 db 22
 oc2 db 23
 or1 db 4
 or2 db 5
 subb db ?
+namee db 30 dup("$")
 marioc1 db 0
 marioc2 db 0
 marior1 db 0
@@ -157,7 +181,7 @@ Column_poistion db 0
 
   mov ax,@data
   mov ds,ax
-  
+  call input
 
 	
 	
@@ -215,8 +239,76 @@ INT 21h
 
 main endp
 
+input proc
+
+mov ah,9
+mov dx,offset enterr
+int 21h
 
 
+
+
+mov ah,3fh
+mov dx,offset namee
+int 21h
+
+
+
+mov ah,06
+mov al,0
+;mov cx,0
+mov ch,0	;c1
+mov cl,00	;r1
+mov dh,30	;c1
+mov dl,79	;r2
+
+mov bh,10011101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,12
+mov dl,30
+int 10h
+lea dx,namee
+mov ah,09
+int 21h
+
+mov bh,10011101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,10
+mov dl,24
+int 10h
+
+lea dx,welcome
+mov ah,09
+int 21h
+
+mov bh,10011101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,24
+int 10h
+
+lea dx,press
+mov ah,09
+int 21h
+
+
+mov dh,12
+mov dl,30
+int 10h 
+
+mov ah,1
+int 21h
+
+
+input endp
+
+ret
 main2 proc
   mov ax,0
   mov ax,0
@@ -437,9 +529,37 @@ Move proc
 move endp
 
 endgame proc
-call clearscreen
-mov ah, 4ch
+;call clearscreen
+
+
+mov ah,06
+mov al,0
+;mov cx,0
+mov ch,0	;c1
+mov cl,00	;r1
+mov dh,30	;c1
+mov dl,79	;r2
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,12
+mov dl,30
+int 10h
+lea dx,msglost
+mov ah,09
 int 21h
+
+
+mov dh,12
+mov dl,30
+int 10h 
+
+mov ah,4ch
+int 21h
+
+
 ret
 
 endgame endp
@@ -596,32 +716,46 @@ detectup endp
 
 collision proc
 
-.if lvl==2 || lvl==4
+.if lvl==2 || lvl==3
 	mov bl,er1
 mov al,er2
  
 	.if bl == or1 || al==or1
 		call endgame
+	
 	.endif
 	sub bl,1
 	sub al,1
 	.if bl == or1 || al==or1
 		call endgame
+	
 	.endif
 	add bl,2
 	add al,2
 	.if bl == or1 || al==or1
 		call endgame
+	
 	.endif
 	add bl,1
 	add bl,1
 	.if bl == or1 || al==or1
 		call endgame
+	
 	.endif
 	sub bl,4
 	sub al,4
 	.if bl == or1  || al==or1
 		call endgame
+	; ll5:	
+	; mov ah,1
+	; int 16h
+	; jz ll5
+	; mov ah,0
+	; int 16h
+	; mov ah,4ch
+	; int 21h
+	
+		
 	.endif
 
 ; mov dl,er1
@@ -748,7 +882,7 @@ display3 proc
 
 
 	drawbox 10011111b,23,24,65,67
-	
+	drawbigenemy bc1,bc2,br1,br2
 	ret
 
 
@@ -899,6 +1033,36 @@ clearscreen endp
 
 
 
+
+
+pushaa proc
+push dx
+	push cx
+	push bx
+	push ax
+	ret
+pushaa endp
+
+popaa proc
+pop ax
+	pop bx
+	pop cx
+	pop dx
+	ret
+popaa endp 
+
+
+
+
+
+
+clearreg proc
+	xor ax,ax
+	xor bx,bx
+	xor cx,cx
+	xor dx,dx
+	ret
+clearreg endp
 draw_border proc
 
 	call clearscreen
@@ -1013,34 +1177,6 @@ ret
 draw_border endp
 
 
-pushaa proc
-push dx
-	push cx
-	push bx
-	push ax
-	ret
-pushaa endp
-
-popaa proc
-pop ax
-	pop bx
-	pop cx
-	pop dx
-	ret
-popaa endp 
-
-
-
-
-
-
-clearreg proc
-	xor ax,ax
-	xor bx,bx
-	xor cx,cx
-	xor dx,dx
-	ret
-clearreg endp
 
 
 endline proc
