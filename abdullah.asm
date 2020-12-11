@@ -10,26 +10,26 @@ mov al,c
 mov marior1 , al
 mov al,d
 mov marior2, al
+;22,23,4,5
 
 
-
-	drawbox 10111101b,marioc1,marioc2,marior1,marior2
+	drawbox 10111101b,marioc1,marioc2,marior1,marior2	;middle body
 dec marioc1	
 sub marioc2,2	
 dec marior1	
 inc marior2
 	
-	drawbox 11111101b,marioc1,marioc2,marior1,marior2
+	drawbox 11111101b,marioc1,marioc2,marior1,marior2	;head
 add marioc1,3
 add marioc2,3
 sub marior2,3	
 	
-	drawbox 11111101b,marioc1,marioc2,marior1,marior2
+	drawbox 11111101b,marioc1,marioc2,marior1,marior2	;left leg
 add marior1,3
 add marior2,3	
 	
-	drawbox 11111101b,marioc1,marioc2,marior1,marior2
-	;ret
+	drawbox 11111101b,marioc1,marioc2,marior1,marior2	;right leg
+
 endm
 ;----------------------------------------------------------------------------
 drawenemy macro a,b
@@ -37,8 +37,30 @@ mov al,a
 mov bl,b
 mov en1r1,al
 mov en1r2,bl
+mov en1c1,22
+mov en1c2,23
 
-drawbox 11110101b,23,24,en1r1,en1r2
+
+
+	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+dec en1c1	
+sub en1c2,2	
+dec en1r1	
+inc en1r2
+	
+	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
+add en1c1,3
+add en1c2,3
+sub en1r2,3	
+	
+	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
+add en1r1,3
+add en1r2,3	
+	
+	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
+
+
+
 endm
 ;------------------------------------------------------------------------------
 
@@ -104,9 +126,10 @@ endm
 en1r1 db 0
 en1r2 db 0	
 
-er1 db 20
-er2 db 21
-
+er1 db 21
+er2 db 22
+en1c1 db ?
+en1c2 db ?
 counte1 db 0
 counte2 db 0
 	
@@ -229,6 +252,9 @@ l2:
 	.if ah==-1
 		jmp exit2
 	.endif
+	.if or2 >75
+	call main3
+	.endif
 	;call clearscreen
 	;drawm c1,c2,r1,r2
 	;inc c1
@@ -251,6 +277,77 @@ ret
 main2 endp
 
 
+
+main3 proc
+
+  mov ax,0
+  mov ax,0
+  mov lvl,3
+; .while ah!=1
+call clearscreen
+
+drawbox 10111101b,25,26,4,8
+ ;drawm c1,c2,r1,r2
+	;add r1,5
+	;add r2,5
+;mov cx,2
+mov oc1, 22
+mov oc2,23
+mov or1,4
+mov or2,5
+	call clearscreen
+	call display3
+	drawm oc1,oc2,or1,or2
+	
+	
+
+	
+l3:
+
+	
+	mov ah,1
+	int 16h
+	
+	; jz l1
+	mov ah,0
+	int 16h
+	call move
+	.if ah==-1
+		jmp exit3
+	.endif
+	;call clearscreen
+	;drawm c1,c2,r1,r2
+	;inc c1
+	;inc c2
+	;add r1,5
+	;add r2,
+	jmp l3
+	
+exit3:	
+LOL3:
+; .endw	
+	;Gotoxy 0,0
+	;character
+
+
+
+MOV AH,4CH
+INT 21h
+ret
+
+
+
+
+main3 endp
+
+
+
+
+
+
+
+
+
 enemymov proc
 
 
@@ -260,8 +357,8 @@ enemymov proc
 			add er2,1
 			inc counte1
 			;call clearscreen
-drawbox 11110101b,23,24,er1,er2
-		
+;drawbox 11110101b,23,24,er1,er2
+drawenemy er1,er2		
 		
  .elseif  counte2<=10
 			.if counte2==10
@@ -272,8 +369,9 @@ drawbox 11110101b,23,24,er1,er2
 			sub er1,1
 			sub er2,1
 		inc counte2
-			drawbox 11110101b,23,24,er1,er2
-		
+			;drawbox 11110101b,23,24,er1,er2
+		drawenemy er1,er2		
+
 		
 	.endif
 
@@ -351,10 +449,13 @@ rightmov proc
 	.if lvl==2
 	call display2
 	.endif
+	.if lvl==3
+	call display3
+	.endif
 	add or1,2
 	add or2,2
 	drawm oc1,oc2,or1,or2
-.if lvl==2
+.if lvl==2 || lvl==3
 	call enemymov
 	.endif
 
@@ -367,6 +468,9 @@ rightmov proc
 	.if lvl==2
 	call display2
 	.endif
+	.if lvl==3
+	call display3
+	.endif
 	add or1,2
 	add or2,2
 	.if or1 >= 21 && or1 <= 24 || (or1 >=39  && or1<=42) || (or1 >= 54 && or1<=57) || (or1 >= 67 && or1<=70)
@@ -374,7 +478,7 @@ rightmov proc
 		add oc2,8
 	.endif
 	drawm oc1,oc2,or1,or2
-	.if lvl==2
+	.if lvl==2|| lvl==3
 	call enemymov
 	;call collision
 	.endif
@@ -395,12 +499,14 @@ call clearscreen
 	.endif
 	.if lvl==2
 	call display2
-
+	.endif
+	.if lvl==3
+	call display3
 	.endif
 	sub or1,2
 	sub or2,2
 	drawm oc1,oc2,or1,or2
-	.if lvl==2
+	.if lvl==2 || lvl==3
 	call enemymov
 	;call collision
 	.endif
@@ -425,16 +531,19 @@ mov var,6
 	jumpp:
 		call delay
 		call clearscreen
-		.if lvl==1
+	.if lvl==1
 	call displayl1
 	.endif
 	.if lvl==2
 	call display2
 	.endif
+	.if lvl==3
+	call display3
+	.endif
 		add or1,2
 		add or2,2	
 		drawm oc1,oc2,or1,or2
-	.if lvl==2
+	.if lvl==2 || lvl==3
 	call enemymov
 	.endif
 
@@ -450,13 +559,16 @@ call clearscreen
 	.if lvl==2
 	call display2
 	.endif
+	.if lvl==3
+	call display3
+	.endif
 
 call detectup
 ; add oc1,8
 ; add oc2,8
 
 drawm oc1,oc2,or1,or2
-	.if lvl==2
+	.if lvl==2 || lvl==3
 	call enemymov
 	.endif
 		
@@ -513,8 +625,8 @@ collision endp
 
 displayl1 proc
 	;flag
-	drawbox 11111111b,0,24,78,78
-	drawbox 10101111b,0,3,66,77
+	drawbox 11111111b,2,24,78,78
+	drawbox 10101111b,2,5,66,77
  
  
 		;obstacles
@@ -539,31 +651,69 @@ displayl1 endp
 
 display2 proc
 ;flag
-	drawbox 01111111b,0,24,78,78
-	drawbox 11101111b,0,3,66,77
+	drawbox 01111111b,2,24,78,78
+	drawbox 01011111b,2,5,66,77
  
  
 		;obstacles
-	drawbox 01001111b,19,24,18,19
-	drawbox 11101111b,18,19,17,20
+	drawbox 10011111b,19,24,18,19
+	drawbox 00111111b,18,19,17,20
 
-	drawbox 01001111b,18,24,35,36
-	drawbox 11101111b,17,18,34,37
-
-
-
-	drawbox 01001111b,19,24,52,53
-	drawbox 11101111b,18,19,51,54
+	drawbox 10011111b,18,24,35,36
+	drawbox 00111111b,17,18,34,37
 
 
-	drawbox 11101111b,23,24,65,67
-	
-	;drawenemy 22,23
+
+	drawbox 10011111b,19,24,52,53
+	drawbox 00111111b,18,19,51,54
+
+
+	drawbox 10011111b,23,24,65,67
 	
 	ret
 	;---------------------------------
 	
 display2 endp
+
+
+
+display3 proc
+;flag
+	drawbox 11111111b,15,21,76,76
+	drawbox 10101111b,15,16,71,75
+	
+	drawbox 11001111b,18,24,78,80
+	drawbox 01111111b,20,24,75,77
+	drawbox 11001111b,18,24,72,74
+  
+		;obstacles
+	drawbox 10011111b,19,24,18,19
+	drawbox 00111111b,18,19,17,20
+
+	drawbox 10011111b,18,24,35,36
+	drawbox 00111111b,17,18,34,37
+
+
+
+	drawbox 10011111b,19,24,52,53
+	drawbox 00111111b,18,19,51,54
+
+
+	drawbox 10011111b,23,24,65,67
+	
+	ret
+
+
+
+
+
+display3 endp
+
+
+
+
+
+
 
 
 
@@ -629,7 +779,7 @@ push dx
 
 mov cx,1000
 mydelay:
-mov bx,600      ;; increase this number if you want to add more delay, and decrease this number if you want to reduce delay.
+mov bx,200      ;; increase this number if you want to add more delay, and decrease this number if you want to reduce delay.
 mydelay1:
 dec bx
 jnz mydelay1
@@ -691,7 +841,7 @@ box proc
 	ret
 box endp
 
-	clearscreen proc
+clearscreen proc
 	mov al,03
 	mov ah,0
 	int 10h
