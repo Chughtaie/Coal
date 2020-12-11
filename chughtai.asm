@@ -552,13 +552,25 @@ up proc
 
 	;call clearscreen
 	;call displayl1
-.if oc1==14
+.if oc1!=22
 	ret
 .endif
 mov cx,2
 
 mov oc1,14
 mov oc2,15
+
+.if or1<20
+add oc1,1
+add oc2,1
+.elseif or1<55&&or1>35
+add oc1,1
+add oc2,1
+.elseif or1>55
+add oc1,6
+add oc2,6
+.endif
+
 
 call show
 mov var,1
@@ -590,10 +602,6 @@ up endp
 detectup proc
 
 .if (or1 > 14 && or1 <= 20) || (or1 > 30 && or1<=38) || (or1 > 48 && or1<=54) || (or1 > 62 && or1<=68)
-	mov ax,ax
-	mov oc1,14
-	mov oc2,15
-	call show
 	ret
 .else
 
