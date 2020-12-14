@@ -199,6 +199,8 @@ counte2 db 0
 	enterr db "ENTER YOUR NAME : $"
 	welcome db "WELCOME TO SUPER MARIO$"
 	press db "Press any key to contine...$"
+	yourscore db "YOUR SCORE: $"
+	
 bc1 db 1
 bc2 db 2
 br1 db 65	
@@ -215,9 +217,9 @@ marior1 db 0
 marior2 db 0
 score db "SCORE: $"
 lvl db 1
-scr db 0
-
-
+scr db " $"
+zero db " $"
+abszero db "0$"
 	
 Row_poistion db 0     ;SET ROW 
 Column_poistion db 0
@@ -512,10 +514,6 @@ ret
 enemymov endp
 
 
-
-
-
-
 Move proc
 	
 	.if ah==04Dh || ah==20h;right,D
@@ -546,15 +544,69 @@ move endp
 
 
 
+scoring proc
+
+.if lvl==1 
+
+	.if or1>17 
+	mov scr,"1"
+
+	.if or1>37 
+	mov scr,"2"
+	.endif
+	.if or1>53 
+	mov scr,"3"
+	.endif
+	.if or1>65 
+	mov scr,"4"
+	.endif
+.endif
+
+
+.endif
+.if lvl==2
+	.if or1>17 
+	mov scr,"5"
+	.endif
+	.if or1>37 
+	mov scr,"6"
+	.endif
+	.if or1>53 
+	mov scr,"7"
+	.endif
+	.if or1>65 
+	mov scr,"8"
+	.endif
+.endif
+
+.if lvl==3
+	.if or1>17 
+	mov scr,"9"
+	.endif
+	.if or1>37 
+	mov zero,"1"
+	mov scr,"0"
+	.endif
+	.if or1>53 
+	mov scr,"1"
+	.endif
+	.if or1>65 
+	mov scr,"2"
+	.endif
+
+
+.endif
+ret
+scoring endp
+
 
 showscore proc
 
-mov ah,06
-mov al,0
+call scoring
 ;mov cx,0
 mov ch,0	;c1
-mov cl,00	;r1
-mov dh,30	;c1
+mov cl,0	;r1
+mov dh,00	;c1
 mov dl,9	;r2
 
 mov bh,10001101b
@@ -567,6 +619,41 @@ int 10h
 lea dx,score
 mov ah,09
 int 21h
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,02 ;c
+mov dl,16 ;
+int 10h
+lea dx,zero
+mov ah,09
+int 21h
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,02 ;c
+mov dl,17 ;
+int 10h
+lea dx,scr
+mov ah,09
+int 21h
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,02 ;c
+mov dl,18 ;
+int 10h
+lea dx,abszero
+mov ah,09
+int 21h
+
+
 
 
 mov dh,12
@@ -603,9 +690,61 @@ mov ah,09
 int 21h
 
 
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,30
+int 10h
+lea dx,yourscore
+mov ah,09
+int 21h
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,43
+int 10h
+lea dx,zero
+mov ah,09
+int 21h
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,44
+int 10h
+lea dx,scr
+mov ah,09
+int 21h
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,45
+int 10h
+lea dx,abszero
+mov ah,09
+int 21h
+
+
 mov dh,12
 mov dl,30
 int 10h 
+
+
+
+
 
 mov ah,4ch
 int 21h
@@ -801,6 +940,8 @@ Show proc
 	.if lvl==2 || lvl==3
 		call enemymov
 	.endif
+		call showscore
+
 	ret
 
 SHOW endp
@@ -871,6 +1012,54 @@ mov ah,09
 int 21h
 
 
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,30
+int 10h
+lea dx,yourscore
+mov ah,09
+int 21h
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,43
+int 10h
+lea dx,zero
+mov ah,09
+int 21h
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,44
+int 10h
+lea dx,scr
+mov ah,09
+int 21h
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,45
+int 10h
+lea dx,abszero
+mov ah,09
+int 21h
+
+
+
 mov dh,12
 mov dl,30
 int 10h 
@@ -884,7 +1073,6 @@ wingame endp
 
 
 displayl1 proc
-	call showscore
 
 	;flag
 	drawbox 11111111b,2,24,78,78
