@@ -1,5 +1,14 @@
 
 
+
+shoot macro ;a,b,c,d,p
+
+
+	drawbox 10111101b,sc1,sc2,sr1,sr2	;middle body
+	;call delay
+endm
+
+
 drawm macro a,b,c,d
 
 mov al,a
@@ -18,6 +27,10 @@ dec marioc1
 sub marioc2,2	
 dec marior1	
 inc marior2
+
+
+
+
 	
 	drawbox 11111101b,marioc1,marioc2,marior1,marior2	;head
 add marioc1,3
@@ -29,6 +42,8 @@ add marior1,3
 add marior2,3	
 	
 	drawbox 11111101b,marioc1,marioc2,marior1,marior2	;right leg
+
+
 
 endm
 ;----------------------------------------------------------------------------
@@ -64,6 +79,40 @@ add en1r2,3
 endm
 ;------------------------------------------------------------------------------
 
+drawenemy2 macro a,b
+mov al,a
+mov bl,b
+mov en1r1,al
+mov en1r2,bl
+mov en1c1,22
+mov en1c2,23
+
+
+
+	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+dec en1c1	
+sub en1c2,2	
+dec en1r1	
+inc en1r2
+	
+	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
+add en1c1,3
+add en1c2,3
+sub en1r2,3	
+	
+	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2	;left leg
+add en1r1,3
+add en1r2,3	
+	
+	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2	;right leg
+
+
+
+endm
+
+
+
+
 drawbigenemy macro a,b,c,d
 mov al,a
 mov en1c1 , al
@@ -74,8 +123,39 @@ mov en1r1 , al
 mov al,d
 mov en1r2, al
 
-	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+;drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+;1,2,65,66
+inc en1c2
+sub en1r1,2
+sub en1r2,2
 
+;1,3,63,64
+drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+
+
+dec en1c2
+sub en1r1,2
+sub en1r2,2
+;1,2,61,62
+drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+
+ADD en1c2,2
+sub en1r1,2
+sub en1r2,2
+
+drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+
+SUB en1c2,2
+sub en1r1,2
+sub en1r2,2
+
+drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+
+INC en1c2
+sub en1r1,2
+sub en1r2,2
+
+drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
 
 endm
 
@@ -144,19 +224,35 @@ en1r2 db 0
 
 er1 db 21
 er2 db 22
+
+eer1 db 48
+eer2 db 49
+
 en1c1 db ?
 en1c2 db ?
 counte1 db 0
+countee1 db 0
+countee2 db 0
 counte2 db 0
+countb1 db 0
+countb2 db 0
 	msg db "CONGRATS!!! YOU WON$"
 	msglost db "YOU LOST!!!LOSER...$"
 	enterr db "ENTER YOUR NAME : $"
 	welcome db "WELCOME TO SUPER MARIO$"
 	press db "Press any key to contine...$"
-bc1 db 1
-bc2 db 2
+	yourscore db "YOUR SCORE: $"
+	
+bc1 db 3
+bc2 db 4
 br1 db 65	
-br2 db 69
+br2 db 65
+sr1 db 0
+sr2 db 0
+sc1 db 0
+sc2 db 0
+phew db 8
+
 oc1 db 22
 oc2 db 23
 or1 db 4
@@ -167,10 +263,13 @@ marioc1 db 0
 marioc2 db 0
 marior1 db 0
 marior2 db 0
+score db "SCORE: $"
 lvl db 1
-
-
-
+lvlstr db " $"
+lostlvl db "LEVEL:$"
+scr db " $"
+zero db " $"
+abszero db "0$"
 	
 Row_poistion db 0     ;SET ROW 
 Column_poistion db 0
@@ -181,6 +280,8 @@ Column_poistion db 0
 
   mov ax,@data
   mov ds,ax
+  call clearscreen
+
   call input
 
 	
@@ -243,13 +344,13 @@ mov dx,offset namee
 int 21h
 
 
-
+call clearscreen
 mov ah,06
 mov al,0
 ;mov cx,0
-mov ch,0	;c1
+mov ch,10	;c1
 mov cl,00	;r1
-mov dh,30	;c1
+mov dh,00	;c1
 mov dl,79	;r2
 
 mov bh,10011101b
@@ -292,8 +393,67 @@ mov dh,12
 mov dl,30
 int 10h 
 
+
+mov marioc1 , 12
+mov marioc2 , 13
+mov marior1 , 12
+mov marior2, 13
+
+	drawbox 10111101b,marioc1,marioc2,marior1,marior2
+dec marioc1	
+sub marioc2,2	
+dec marior1	
+inc marior2
+	
+	drawbox 11111101b,marioc1,marioc2,marior1,marior2
+add marioc1,3
+add marioc2,3
+sub marior2,3	
+	
+	drawbox 11111101b,marioc1,marioc2,marior1,marior2
+add marior1,3
+add marior2,3	
+	
+	drawbox 11111101b,marioc1,marioc2,marior1,marior2
+	
+	
+	
+
+mov en1r1,60
+mov en1r2,61
+mov en1c1,12
+mov en1c2,13
+
+
+	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+dec en1c1	
+sub en1c2,2	
+dec en1r1	
+inc en1r2
+	
+	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
+add en1c1,3
+add en1c2,3
+sub en1r2,3	
+	
+	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2	;left leg
+add en1r1,3
+add en1r2,3	
+	
+	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
+	
+	
+	
+	
+	
+
 mov ah,1
 int 21h
+
+
+
+
+
 
 
 input endp
@@ -373,21 +533,20 @@ mov or2,5
 	
 
 	
-l3:
+	l3:
+		mov ah,1
+		int 16h
 
+		mov ah,0
+		int 16h
+		call move
 	
-	mov ah,1
-	int 16h
+		.if ah==-1
+			jmp exit3
+		.elseif or2 >75
+			call wingame
+		.endif
 
-	mov ah,0
-	int 16h
-	call move
-	
-	.if ah==-1
-		jmp exit3
-	.elseif or2 >75
-		call wingame
-	.endif
 	jmp l3
 	
 exit3:	
@@ -403,12 +562,75 @@ ret
 main3 endp
 
 
+bigenemymov proc
+
+;---------SHOOTING----------------
+	dec phew
+	.if(phew<=0)
+		
+		mov al,br1
+		mov sr1,al
+		sub sr1,8
+		;mov al,br2
+		mov sr2,al
+		sub sr2,8
+		mov al,bc1
+		mov sc1,al
+		mov al,bc2
+		mov sc2,al
+		
+		add sc1,4
+		add sc2,4
+		
+		mov phew,10
+
+	.endif
+	.if(phew!=1)
+		drawbox 10111101b,sc1,sc2,sr1,sr2
+		add sc1,2
+		add sc2,2
+	.endif
+	;drawbigenemy bc1,bc2,br1,br2
+	;shoot 	
+	
+	mov al,oc1
+	;sub al,2
+	mov ah,oc2
+	mov bl,or1
+	
+	mov bh,or2
+	add bh,2
+	.if (sc2>=al && sr1>=bl && sr1<=bh) 
+		call delay
+		call delay
+		call endgame
+	.endif
+;-----------END SHOOOTING-----------------------
 
 
+	.if countb1<=35
+		
+		sub br1,1 
+		sub br2,1
+		inc countb1
+		
+		drawbigenemy bc1,bc2,br1,br2		
+		
+	.elseif  countb2<=35
+	
+		.if countb2==35
+			mov countb1,1
+			mov countb2,0
+		.endif
+		add br1,1
+		add br2,1
+		inc countb2
+		drawbigenemy bc1,bc2,br1,br2		
+		
+	.endif
 
-
-
-
+ret
+bigenemymov endp
 
 enemymov proc
 
@@ -436,13 +658,33 @@ drawenemy er1,er2
 
 		
 	.endif
+;--------
+ .if countee1<=10			
+		
+			sub eer1,1
+			sub eer2,1
+			inc countee1
+			
+drawenemy2 eer1,eer2		
+		
+ .elseif  countee2<=10
+			.if countee2==10
+			mov countee1,1
+			mov countee2,0
+			.endif
+			add eer1,1
+			add eer2,1
+		inc countee2
+		drawenemy2 eer1,eer2		
+
+		
+	.endif
+
+
+
 
 ret
 enemymov endp
-
-
-
-
 
 
 Move proc
@@ -461,6 +703,8 @@ Move proc
 	
 	.elseif ah==50h || ah==1Fh	;Down,S	
 	
+	call down
+	
 	.elseif ah==1
 	call clearscreen
 	mov ah,-1
@@ -471,26 +715,229 @@ Move proc
 	ret
 move endp
 
+
+
+scoring proc
+
+.if lvl==1 
+	.if or1>17 
+	mov scr,"1"
+	.endif
+	.if or1>37 
+	mov scr,"2"
+	.endif
+	.if or1>53 
+	mov scr,"3"
+	.endif
+	.if or1>65 
+	mov scr,"4"
+	.endif
+
+
+
+
+.elseif lvl==2
+	.if or1>17 
+	mov scr,"5"
+	.endif
+	.if or1>37 
+	mov scr,"6"
+	.endif
+	.if or1>53 
+	mov scr,"7"
+	.endif
+	.if or1>65 
+	mov scr,"8"
+	.endif
+
+
+.elseif lvl==3
+	.if or1>17 
+	mov scr,"9"
+	.endif
+	.if or1>37 
+	mov zero,"1"
+	mov scr,"0"
+	.endif
+	.if or1>53 
+	mov scr,"1"
+	.endif
+	.if or1>65 
+	mov scr,"2"
+	.endif
+
+
+.endif
+ret
+scoring endp
+
+
+showscore proc
+
+call scoring
+;mov cx,0
+mov ch,0	;c1
+mov cl,0	;r1
+mov dh,00	;c1
+mov dl,9	;r2
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,02 ;c
+mov dl,10 ;
+int 10h
+lea dx,score
+mov ah,09
+int 21h
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,02 ;c
+mov dl,16 ;
+int 10h
+lea dx,zero
+mov ah,09
+int 21h
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,02 ;c
+mov dl,17 ;
+int 10h
+lea dx,scr
+mov ah,09
+int 21h
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,02 ;c
+mov dl,18 ;
+int 10h
+lea dx,abszero
+mov ah,09
+int 21h
+
+
+
+
+mov dh,12
+mov dl,30
+int 10h 
+
+
+
+ret
+showscore endp
+
+
 endgame proc
 ;call clearscreen
 
-
+call clearscreen
 mov ah,06
 mov al,0
 ;mov cx,0
 mov ch,0	;c1
 mov cl,00	;r1
-mov dh,30	;c1
+mov dh,0	;c1
 mov dl,79	;r2
 
 mov bh,10001101b
 int 10h
 mov ah,02
 mov bh,0
-mov dh,12
+mov dh,10
 mov dl,30
 int 10h
 lea dx,msglost
+mov ah,09
+int 21h
+
+.if lvl==2
+mov lvlstr,"2"
+.endif
+.if lvl==3
+mov lvlstr,"3"
+.endif
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,12
+mov dl,35
+int 10h
+lea dx,lostlvl
+mov ah,09
+int 21h
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,12
+mov dl,42
+int 10h
+lea dx,lvlstr
+mov ah,09
+int 21h
+
+
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,30
+int 10h
+lea dx,yourscore
+mov ah,09
+int 21h
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,43
+int 10h
+lea dx,zero
+mov ah,09
+int 21h
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,44
+int 10h
+lea dx,scr
+mov ah,09
+int 21h
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,45
+int 10h
+lea dx,abszero
 mov ah,09
 int 21h
 
@@ -498,6 +945,10 @@ int 21h
 mov dh,12
 mov dl,30
 int 10h 
+
+
+
+
 
 mov ah,4ch
 int 21h
@@ -507,9 +958,69 @@ ret
 
 endgame endp
 
-rightmov proc
+down proc
 
-.if   or1==14 || or1==30 || or1==48 || or1==62 
+call clearscreen
+call clearscreen
+	.if lvl==1
+	call displayl1
+	.elseif lvl==2
+	call display2
+	.elseif lvl==3
+	call display3
+	.endif
+
+
+
+mov al,oc1
+mov marioc1 , al
+mov al,oc2
+mov marioc2 , al
+mov al,or1
+mov marior1 , al
+mov al,or2
+mov marior2, al
+;22,23,4,5
+
+
+inc marioc1
+
+	drawbox 10111101b,marioc1,marioc2,marior1,marior2	;middle body
+dec marioc1	
+dec marioc2	
+dec marior1	
+inc marior2
+	
+	drawbox 11111101b,marioc1,marioc2,marior1,marior2;head
+add marioc1,2
+add marioc2,2
+sub marior2,3	
+	;25,25,,3
+	drawbox 11111101b,marioc1,marioc2,marior1,marior2	;left leg
+add marior1,3
+add marior2,3	
+	;25,25,+3,6
+	drawbox 11111101b,marioc1,marioc2,marior1,marior2	;
+
+
+
+	
+	.if lvl==2 || lvl==3
+		call enemymov
+	.endif
+	.if lvl==1 || lvl==3
+		call bigenemymov
+	.endif
+call delay
+call show
+ret
+down endp
+
+
+
+rightmov proc
+.if lvl<4
+.if  or1==14 || or1==30 || or1==48 || or1==62 
 mov ax,ax
 .else
 
@@ -521,6 +1032,7 @@ mov ax,ax
 .endif
 call collision
 call detectup
+.endif
 ret
 rightmov endp
 
@@ -530,6 +1042,7 @@ rightmov endp
 
 leftmov proc
 ;.if  oc2 > 22 && or1>5 && or1<15 || or1>23 && or1 < 33 || or1>41 && or1<50 || or1> 57 && or1<66 || or1>70
+.if lvl<4
 .if  (or1==22 || or1==38 || or1==56 || or1==70)
 mov ax,ax
 .elseif or1>4
@@ -543,13 +1056,14 @@ mov ax,ax
 .endif
 call detectup
 call collision
+.endif
 ret
 leftmov endp
 
 
 
 up proc
-
+.if lvl<4
 	;call clearscreen
 	;call displayl1
 .if oc1!=22
@@ -594,7 +1108,7 @@ mov var,1
 call detectup
 
 call show
-	
+.endif	
 ret 
 up endp
 
@@ -633,6 +1147,11 @@ Show proc
 	.if lvl==2 || lvl==3
 		call enemymov
 	.endif
+	.if lvl==1 || lvl==3
+		call bigenemymov
+	.endif
+		call showscore
+
 	ret
 
 SHOW endp
@@ -643,26 +1162,30 @@ collision proc
 .if lvl==2 || lvl==3
 	mov bl,er1
 mov al,er2
+ mov cl,eer1
+ mov dl,eer2
  
-	.if bl == or1 || al==or1
+ 
+	.if bl == or1 || al==or1 || cl == or1 || dl==or1
 		call endgame
 	
 	.endif
 	sub bl,1
 	sub al,1
-	.if bl == or1 || al==or1
+	.if bl == or1 || al==or1 || cl == or1 || dl==or1
 		call endgame
 	
 	.endif
 	add bl,2
 	add al,2
-	.if bl == or1 || al==or1
+	.if bl == or1 || al==or1 || cl == or1 || dl==or1
+	
 		call endgame
 	
 	.endif
 	add bl,1
 	add bl,1
-	.if bl == or1 || al==or1
+	.if bl == or1 || al==or1 || cl == or1 || dl==or1
 		call endgame
 	
 	.endif
@@ -677,6 +1200,7 @@ ret
 collision endp
 
 wingame proc
+mov lvl,4
 
 mov ah,06
 mov al,0
@@ -698,6 +1222,54 @@ mov ah,09
 int 21h
 
 
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,30
+int 10h
+lea dx,yourscore
+mov ah,09
+int 21h
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,43
+int 10h
+lea dx,zero
+mov ah,09
+int 21h
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,44
+int 10h
+lea dx,scr
+mov ah,09
+int 21h
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,45
+int 10h
+lea dx,abszero
+mov ah,09
+int 21h
+
+
+
 mov dh,12
 mov dl,30
 int 10h 
@@ -711,6 +1283,7 @@ wingame endp
 
 
 displayl1 proc
+
 	;flag
 	drawbox 11111111b,2,24,78,78
 	drawbox 10101111b,2,5,66,77
@@ -729,6 +1302,8 @@ displayl1 proc
 
 
 	drawbox 11101111b,23,24,65,67
+		
+
 	ret
 	;---------------------------------
 
@@ -756,7 +1331,6 @@ display2 proc
 
 
 	drawbox 10011111b,23,24,65,67
-	
 	ret
 	;---------------------------------
 	
@@ -787,49 +1361,11 @@ display3 proc
 
 
 	drawbox 10011111b,23,24,65,67
-	drawbigenemy bc1,bc2,br1,br2
 	ret
-
-
-
-
 
 display3 endp
 
 
-
-
-
-
-
-
-
-comment&
-drawmario proc
-mov marioc1 , 21
-mov marioc2 , 23
-mov marior1 , 4
-mov marior2, 5
-
-	drawbox 10111101b,marioc1,marioc2,marior1,marior2
-dec marioc1	
-sub marioc2,2	
-dec marior1	
-inc marior2
-	
-	drawbox 11111101b,marioc1,marioc2,marior1,marior2
-add marioc1,3
-add marioc2,3
-sub marior2,3	
-	
-	drawbox 11111101b,marioc1,marioc2,marior1,marior2
-add marior1,3
-add marior2,3	
-	
-	drawbox 11111101b,marioc1,marioc2,marior1,marior2
-	ret
-drawmario endp
-&
 drawline proc
 
 mov ax,6	;select mode 6.high res
