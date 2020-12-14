@@ -217,6 +217,8 @@ marior1 db 0
 marior2 db 0
 score db "SCORE: $"
 lvl db 1
+lvlstr db " $"
+lostlvl db "LEVEL:$"
 scr db " $"
 zero db " $"
 abszero db "0$"
@@ -292,13 +294,13 @@ mov dx,offset namee
 int 21h
 
 
-
+call clearscreen
 mov ah,06
 mov al,0
 ;mov cx,0
 mov ch,0	;c1
 mov cl,00	;r1
-mov dh,30	;c1
+mov dh,00	;c1
 mov dl,79	;r2
 
 mov bh,10011101b
@@ -341,8 +343,67 @@ mov dh,12
 mov dl,30
 int 10h 
 
+
+mov marioc1 , 12
+mov marioc2 , 13
+mov marior1 , 12
+mov marior2, 13
+
+	drawbox 10111101b,marioc1,marioc2,marior1,marior2
+dec marioc1	
+sub marioc2,2	
+dec marior1	
+inc marior2
+	
+	drawbox 11111101b,marioc1,marioc2,marior1,marior2
+add marioc1,3
+add marioc2,3
+sub marior2,3	
+	
+	drawbox 11111101b,marioc1,marioc2,marior1,marior2
+add marior1,3
+add marior2,3	
+	
+	drawbox 11111101b,marioc1,marioc2,marior1,marior2
+	
+	
+	
+
+mov en1r1,60
+mov en1r2,61
+mov en1c1,12
+mov en1c2,13
+
+
+	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+dec en1c1	
+sub en1c2,2	
+dec en1r1	
+inc en1r2
+	
+	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
+add en1c1,3
+add en1c2,3
+sub en1r2,3	
+	
+	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2	;left leg
+add en1r1,3
+add en1r2,3	
+	
+	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
+	
+	
+	
+	
+	
+
 mov ah,1
 int 21h
+
+
+
+
+
 
 
 input endp
@@ -547,10 +608,9 @@ move endp
 scoring proc
 
 .if lvl==1 
-
 	.if or1>17 
 	mov scr,"1"
-
+	.endif
 	.if or1>37 
 	mov scr,"2"
 	.endif
@@ -560,11 +620,11 @@ scoring proc
 	.if or1>65 
 	mov scr,"4"
 	.endif
-.endif
 
 
-.endif
-.if lvl==2
+
+
+.elseif lvl==2
 	.if or1>17 
 	mov scr,"5"
 	.endif
@@ -577,9 +637,9 @@ scoring proc
 	.if or1>65 
 	mov scr,"8"
 	.endif
-.endif
 
-.if lvl==3
+
+.elseif lvl==3
 	.if or1>17 
 	mov scr,"9"
 	.endif
@@ -669,13 +729,13 @@ showscore endp
 endgame proc
 ;call clearscreen
 
-
+call clearscreen
 mov ah,06
 mov al,0
 ;mov cx,0
 mov ch,0	;c1
 mov cl,00	;r1
-mov dh,30	;c1
+mov dh,0	;c1
 mov dl,79	;r2
 
 mov bh,10001101b
@@ -689,6 +749,23 @@ lea dx,msglost
 mov ah,09
 int 21h
 
+.if lvl==2
+mov lvlstr,"2"
+.endif
+.if lvl==3
+mov lvlstr,"3"
+.endif
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,12
+mov dl,30
+int 10h
+lea dx,msglost
+mov ah,09
+int 21h
 
 
 mov bh,10001101b
@@ -696,6 +773,32 @@ int 10h
 mov ah,02
 mov bh,0
 mov dh,14
+mov dl,35
+int 10h
+lea dx,lostlvl
+mov ah,09
+int 21h
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,14
+mov dl,42
+int 10h
+lea dx,lvlstr
+mov ah,09
+int 21h
+
+
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,16
 mov dl,30
 int 10h
 lea dx,yourscore
@@ -706,7 +809,7 @@ mov bh,10001101b
 int 10h
 mov ah,02
 mov bh,0
-mov dh,14
+mov dh,16
 mov dl,43
 int 10h
 lea dx,zero
@@ -718,7 +821,7 @@ mov bh,10001101b
 int 10h
 mov ah,02
 mov bh,0
-mov dh,14
+mov dh,16
 mov dl,44
 int 10h
 lea dx,scr
@@ -730,7 +833,7 @@ mov bh,10001101b
 int 10h
 mov ah,02
 mov bh,0
-mov dh,14
+mov dh,16
 mov dl,45
 int 10h
 lea dx,abszero
