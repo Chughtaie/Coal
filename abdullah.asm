@@ -114,8 +114,39 @@ mov en1r1 , al
 mov al,d
 mov en1r2, al
 
-	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+;drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+;1,2,65,66
+inc en1c2
+sub en1r1,2
+sub en1r2,2
 
+;1,3,63,64
+drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+
+
+dec en1c2
+sub en1r1,2
+sub en1r2,2
+;1,2,61,62
+drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+
+ADD en1c2,2
+sub en1r1,2
+sub en1r2,2
+
+drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+
+SUB en1c2,2
+sub en1r1,2
+sub en1r2,2
+
+drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+
+INC en1c2
+sub en1r1,2
+sub en1r2,2
+
+drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
 
 endm
 
@@ -194,6 +225,8 @@ counte1 db 0
 countee1 db 0
 countee2 db 0
 counte2 db 0
+countb1 db 0
+countb2 db 0
 	msg db "CONGRATS!!! YOU WON$"
 	msglost db "YOU LOST!!!LOSER...$"
 	enterr db "ENTER YOUR NAME : $"
@@ -201,10 +234,11 @@ counte2 db 0
 	press db "Press any key to contine...$"
 	yourscore db "YOUR SCORE: $"
 	
-bc1 db 1
-bc2 db 2
+bc1 db 3
+bc2 db 4
 br1 db 65	
-br2 db 69
+br2 db 65
+
 oc1 db 22
 oc2 db 23
 or1 db 4
@@ -513,12 +547,32 @@ ret
 main3 endp
 
 
+bigenemymov proc
+.if countb1<=35			
+		
+			sub br1,1
+			sub br2,1
+			inc countb1
+drawbigenemy bc1,bc2,br1,br2		
+		
+ .elseif  countb2<=35
+			.if countb2==35
+			mov countb1,1
+			mov countb2,0
+			.endif
+			add br1,1
+			add br2,1
+		inc countb2
+		drawbigenemy bc1,bc2,br1,br2		
+
+		
+	.endif
 
 
 
 
-
-
+ret
+bigenemymov endp
 
 enemymov proc
 
@@ -742,7 +796,7 @@ mov bh,10001101b
 int 10h
 mov ah,02
 mov bh,0
-mov dh,12
+mov dh,10
 mov dl,30
 int 10h
 lea dx,msglost
@@ -756,23 +810,12 @@ mov lvlstr,"2"
 mov lvlstr,"3"
 .endif
 
+
 mov bh,10001101b
 int 10h
 mov ah,02
 mov bh,0
 mov dh,12
-mov dl,30
-int 10h
-lea dx,msglost
-mov ah,09
-int 21h
-
-
-mov bh,10001101b
-int 10h
-mov ah,02
-mov bh,0
-mov dh,14
 mov dl,35
 int 10h
 lea dx,lostlvl
@@ -784,7 +827,7 @@ mov bh,10001101b
 int 10h
 mov ah,02
 mov bh,0
-mov dh,14
+mov dh,12
 mov dl,42
 int 10h
 lea dx,lvlstr
@@ -798,7 +841,7 @@ mov bh,10001101b
 int 10h
 mov ah,02
 mov bh,0
-mov dh,16
+mov dh,14
 mov dl,30
 int 10h
 lea dx,yourscore
@@ -809,7 +852,7 @@ mov bh,10001101b
 int 10h
 mov ah,02
 mov bh,0
-mov dh,16
+mov dh,14
 mov dl,43
 int 10h
 lea dx,zero
@@ -821,7 +864,7 @@ mov bh,10001101b
 int 10h
 mov ah,02
 mov bh,0
-mov dh,16
+mov dh,14
 mov dl,44
 int 10h
 lea dx,scr
@@ -833,7 +876,7 @@ mov bh,10001101b
 int 10h
 mov ah,02
 mov bh,0
-mov dh,16
+mov dh,14
 mov dl,45
 int 10h
 lea dx,abszero
@@ -906,6 +949,9 @@ add marior2,3
 	
 	.if lvl==2 || lvl==3
 		call enemymov
+	.endif
+	.if lvl==1 || lvl==3
+		call bigenemymov
 	.endif
 call delay
 call show
@@ -1042,6 +1088,9 @@ Show proc
 	
 	.if lvl==2 || lvl==3
 		call enemymov
+	.endif
+	.if lvl==1 || lvl==3
+		call bigenemymov
 	.endif
 		call showscore
 
@@ -1195,6 +1244,8 @@ displayl1 proc
 
 
 	drawbox 11101111b,23,24,65,67
+		drawbigenemy bc1,bc2,br1,br2
+
 	ret
 	;---------------------------------
 
@@ -1252,7 +1303,6 @@ display3 proc
 
 
 	drawbox 10011111b,23,24,65,67
-	drawbigenemy bc1,bc2,br1,br2
 	ret
 
 
