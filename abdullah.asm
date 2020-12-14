@@ -266,6 +266,8 @@ Column_poistion db 0
 
   mov ax,@data
   mov ds,ax
+  call clearscreen
+
   call input
 
 	
@@ -332,7 +334,7 @@ call clearscreen
 mov ah,06
 mov al,0
 ;mov cx,0
-mov ch,0	;c1
+mov ch,10	;c1
 mov cl,00	;r1
 mov dh,00	;c1
 mov dl,79	;r2
@@ -550,7 +552,7 @@ main3 endp
 bigenemymov proc
 .if countb1<=35			
 		
-			sub br1,1
+			sub br1,1 
 			sub br2,1
 			inc countb1
 drawbigenemy bc1,bc2,br1,br2		
@@ -1244,7 +1246,7 @@ displayl1 proc
 
 
 	drawbox 11101111b,23,24,65,67
-		drawbigenemy bc1,bc2,br1,br2
+		
 
 	ret
 	;---------------------------------
