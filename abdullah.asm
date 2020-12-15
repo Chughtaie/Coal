@@ -1181,34 +1181,41 @@ collision proc
 mov al,er2
  mov cl,eer1
  mov dl,eer2
- 
- 
-	.if bl == or1 || al==or1 || cl == or1 || dl==or1
+
+	.if (bl == or1 || al==or1 || cl == or1 || dl==or1) &&  oc1>=21
 		call endgame
 	
 	.endif
 	sub bl,1
 	sub al,1
-	.if bl == or1 || al==or1 || cl == or1 || dl==or1
+	sub cl,1
+	sub dl,1
+	.if (bl == or1 || al==or1 || cl == or1 || dl==or1) &&  oc1>=21
 		call endgame
 	
 	.endif
 	add bl,2
 	add al,2
-	.if bl == or1 || al==or1 || cl == or1 || dl==or1
+	add cl,2
+	add dl,2
+	.if (bl == or1 || al==or1 || cl == or1 || dl==or1) &&  oc1>=21
 	
 		call endgame
 	
 	.endif
 	add bl,1
-	add bl,1
-	.if bl == or1 || al==or1 || cl == or1 || dl==or1
+	add al,1
+	add cl,1
+	add dl,1
+	.if (bl == or1 || al==or1 || cl == or1 || dl==or1) &&  oc1>=21
 		call endgame
 	
 	.endif
 	sub bl,4
 	sub al,4
-	.if bl == or1  || al==or1 || cl == or1 || dl==or1
+	sub cl,4
+	sub dl,4
+	.if (bl == or1  || al==or1 || cl == or1 || dl==or1) &&  oc1>=21
 		call endgame
 	.endif
 .endif
