@@ -1,5 +1,14 @@
 
 
+
+shoot macro ;a,b,c,d,p
+
+
+	drawbox 10111101b,sc1,sc2,sr1,sr2	;middle body
+	;call delay
+endm
+
+
 drawm macro a,b,c,d
 
 mov al,a
@@ -222,13 +231,13 @@ eer2 db 49
 en1c1 db ?
 en1c2 db ?
 counte1 db 0
-countee1 db 0
+countee1 db 1
 countee2 db 0
 counte2 db 0
 countb1 db 0
 countb2 db 0
-	msg db "CONGRATS!!! YOU WON$"
-	msglost db "YOU LOST!!!LOSER...$"
+	msg db "CONGRATS!!! YOU WON, $"
+	msglost db "YOU LOST, $"
 	enterr db "ENTER YOUR NAME : $"
 	welcome db "WELCOME TO SUPER MARIO$"
 	press db "Press any key to contine...$"
@@ -238,6 +247,11 @@ bc1 db 3
 bc2 db 4
 br1 db 65	
 br2 db 65
+sr1 db 0
+sr2 db 0
+sc1 db 0
+sc2 db 0
+phew db 8
 
 oc1 db 22
 oc2 db 23
@@ -331,6 +345,7 @@ int 21h
 
 
 call clearscreen
+call draw_border
 mov ah,06
 mov al,0
 ;mov cx,0
@@ -519,21 +534,20 @@ mov or2,5
 	
 
 	
-l3:
+	l3:
+		mov ah,1
+		int 16h
 
+		mov ah,0
+		int 16h
+		call move
 	
-	mov ah,1
-	int 16h
+		.if ah==-1
+			jmp exit3
+		.elseif or2 >75
+			call wingame
+		.endif
 
-	mov ah,0
-	int 16h
-	call move
-	
-	.if ah==-1
-		jmp exit3
-	.elseif or2 >75
-		call wingame
-	.endif
 	jmp l3
 	
 exit3:	
@@ -550,28 +564,71 @@ main3 endp
 
 
 bigenemymov proc
-.if countb1<=35			
+
+;---------SHOOTING----------------
+	dec phew
+	.if(phew<=0)
 		
-			sub br1,1 
-			sub br2,1
-			inc countb1
-drawbigenemy bc1,bc2,br1,br2		
+		mov al,br1
+		mov sr1,al
+		sub sr1,8
+		;mov al,br2
+		mov sr2,al
+		sub sr2,8
+		mov al,bc1
+		mov sc1,al
+		mov al,bc2
+		mov sc2,al
 		
- .elseif  countb2<=35
-			.if countb2==35
+		add sc1,4
+		add sc2,4
+		
+		mov phew,10
+
+	.endif
+	.if(phew!=1)
+		drawbox 10111101b,sc1,sc2,sr1,sr2
+		add sc1,2
+		add sc2,2
+	.endif
+	;drawbigenemy bc1,bc2,br1,br2
+	;shoot 	
+	
+	mov al,oc1
+	;sub al,2
+	mov ah,oc2
+	mov bl,or1
+	
+	mov bh,or2
+	add bh,2
+	.if (sc2>=al && sr1>=bl && sr1<=bh) 
+		call delay
+		;call delay
+		call endgame
+	.endif
+;-----------END SHOOOTING-----------------------
+
+
+	.if countb1<=35
+		
+		sub br1,1 
+		sub br2,1
+		inc countb1
+		
+		drawbigenemy bc1,bc2,br1,br2		
+		
+	.elseif  countb2<=35
+	
+		.if countb2==35
 			mov countb1,1
 			mov countb2,0
-			.endif
-			add br1,1
-			add br2,1
+		.endif
+		add br1,1
+		add br2,1
 		inc countb2
 		drawbigenemy bc1,bc2,br1,br2		
-
 		
 	.endif
-
-
-
 
 ret
 bigenemymov endp
@@ -805,6 +862,18 @@ lea dx,msglost
 mov ah,09
 int 21h
 
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,10
+mov dl,40
+int 10h
+lea dx,namee
+mov ah,09
+int 21h
+
+
 .if lvl==2
 mov lvlstr,"2"
 .endif
@@ -823,6 +892,8 @@ int 10h
 lea dx,lostlvl
 mov ah,09
 int 21h
+
+
 
 
 mov bh,10001101b
@@ -952,9 +1023,11 @@ add marior2,3
 	.if lvl==2 || lvl==3
 		call enemymov
 	.endif
-	.if lvl==1 || lvl==3
+	.if  lvl==3
 		call bigenemymov
 	.endif
+call collision
+
 call delay
 call show
 ret
@@ -1091,7 +1164,7 @@ Show proc
 	.if lvl==2 || lvl==3
 		call enemymov
 	.endif
-	.if lvl==1 || lvl==3
+	.if  lvl==3
 		call bigenemymov
 	.endif
 		call showscore
@@ -1135,7 +1208,7 @@ mov al,er2
 	.endif
 	sub bl,4
 	sub al,4
-	.if bl == or1  || al==or1
+	.if bl == or1  || al==or1 || cl == or1 || dl==or1
 		call endgame
 	.endif
 .endif
@@ -1162,6 +1235,20 @@ mov dh,12
 mov dl,30
 int 10h
 lea dx,msg
+mov ah,09
+int 21h
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,12
+add dl,lengthof msg
+dec dl
+
+int 10h
+lea dx,namee
 mov ah,09
 int 21h
 
@@ -1307,46 +1394,9 @@ display3 proc
 	drawbox 10011111b,23,24,65,67
 	ret
 
-
-
-
-
 display3 endp
 
 
-
-
-
-
-
-
-
-comment&
-drawmario proc
-mov marioc1 , 21
-mov marioc2 , 23
-mov marior1 , 4
-mov marior2, 5
-
-	drawbox 10111101b,marioc1,marioc2,marior1,marior2
-dec marioc1	
-sub marioc2,2	
-dec marior1	
-inc marior2
-	
-	drawbox 11111101b,marioc1,marioc2,marior1,marior2
-add marioc1,3
-add marioc2,3
-sub marior2,3	
-	
-	drawbox 11111101b,marioc1,marioc2,marior1,marior2
-add marior1,3
-add marior2,3	
-	
-	drawbox 11111101b,marioc1,marioc2,marior1,marior2
-	ret
-drawmario endp
-&
 drawline proc
 
 mov ax,6	;select mode 6.high res
@@ -1487,14 +1537,14 @@ clearreg proc
 clearreg endp
 draw_border proc
 
-	call clearscreen
 
 	;-------left side----------
 
 
-	mov Row_poistion, 18
-	mov Column_poistion,10
-	
+	mov Row_poistion, 9
+	mov Column_poistion,20
+		mov count,0
+
 
 
 	left:
@@ -1518,7 +1568,7 @@ draw_border proc
 	;-------right side----------
 
 	mov Row_poistion, 9
-	mov Column_poistion, 45
+	mov Column_poistion, 49
 
 	mov count,0
 	right:
@@ -1544,8 +1594,8 @@ draw_border proc
 
 	;-------top side-----------
 
-	mov Row_poistion, 8			;row on dosbox
-	mov Column_poistion, 28		;column on dosbox
+	mov Row_poistion, 9		;row on dosbox
+	mov Column_poistion, 22		;column on dosbox
 	
 	mov count,0
 	top:
@@ -1565,13 +1615,13 @@ draw_border proc
 		int 10h
 		add Column_poistion,1
 	
-		cmp	count,18
+		cmp	count,25
 		jbe top
 
 	;-------bottom side----------
 
-	mov Row_poistion, 12
-	mov Column_poistion, 28
+	mov Row_poistion, 11
+	mov Column_poistion, 22
 
 	mov count,0
 
@@ -1590,7 +1640,7 @@ draw_border proc
 		int 10h
 		add Column_poistion,1
 		
-		cmp	count,18
+		cmp	count,25
 		jbe bottom
 
 	;--------------------------------------
