@@ -1468,9 +1468,7 @@ display2 endp
 display3 proc
 ;flag
 	drawbox 11111111b,15,21,76,76
-	.if bol==1
 	drawbox 10101111b,15,16,71,75
-	.endif
 	
 	drawbox 11001111b,18,24,78,80
 	drawbox 01111111b,20,24,75,77
