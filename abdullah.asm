@@ -224,6 +224,7 @@ en1r2 db 0
 
 er1 db 21
 er2 db 22
+bol db 1
 
 eer1 db 48
 eer2 db 49
@@ -313,6 +314,7 @@ l1:
 	.if ah==-1
 		jmp exit
 	.elseif or2 >75
+	call flagging
 		call main2
 	.endif
 	jmp l1
@@ -493,6 +495,7 @@ l2:
 	.if ah==-1
 		jmp exit2	
 	.elseif or2 >75
+	call flagging
 		call main3
 	.endif
 
@@ -1239,7 +1242,7 @@ int 10h
 mov ah,02
 mov bh,0
 mov dh,12
-mov dl,30
+mov dl,27
 int 10h
 lea dx,msg
 mov ah,09
@@ -1252,7 +1255,8 @@ mov ah,02
 mov bh,0
 mov dh,12
 add dl,lengthof msg
-dec dl
+inc dl
+
 
 int 10h
 lea dx,namee
@@ -1319,13 +1323,97 @@ wingame endp
 
 
 
+flagging proc
+mov bol,0
+
+.if lvl==1
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+drawbox 10101111b,5,8,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+drawbox 10101111b,8,11,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+drawbox 10101111b,11,14,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+
+drawbox 10101111b,14,17,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+drawbox 10101111b,17,21,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+drawbox 10101111b,21,24,66,77
+.endif
+
+
+.if lvl==2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+	drawbox 01011111b,2,5,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+	drawbox 01011111b,5,8,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+	drawbox 01011111b,8,11,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+
+	drawbox 01011111b,11,14,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+	drawbox 01011111b,14,17,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+	drawbox 01011111b,17,21,66,77
+	call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+	drawbox 01011111b,21,24,66,77
+.endif
+
+
+
+mov bol,1
+ret
+flagging endp
+
+
 
 displayl1 proc
 
 	;flag
+	
 	drawbox 11111111b,2,24,78,78
+.if bol==1
 	drawbox 10101111b,2,5,66,77
- 
+ .endif
  
 		;obstacles
 	drawbox 01001111b,19,24,18,19
@@ -1352,8 +1440,9 @@ displayl1 endp
 display2 proc
 ;flag
 	drawbox 01111111b,2,24,78,78
+	.if bol==1
 	drawbox 01011111b,2,5,66,77
- 
+ .endif
  
 		;obstacles
 	drawbox 10011111b,19,24,18,19
@@ -1379,26 +1468,28 @@ display2 endp
 display3 proc
 ;flag
 	drawbox 11111111b,15,21,76,76
+	.if bol==1
 	drawbox 10101111b,15,16,71,75
+	.endif
 	
 	drawbox 11001111b,18,24,78,80
 	drawbox 01111111b,20,24,75,77
 	drawbox 11001111b,18,24,72,74
   
 		;obstacles
-	drawbox 10011111b,19,24,18,19
-	drawbox 00111111b,18,19,17,20
+	drawbox 11101111b,19,24,18,19
+	drawbox 10101111b,18,19,17,20
 
-	drawbox 10011111b,18,24,35,36
-	drawbox 00111111b,17,18,34,37
-
-
-
-	drawbox 10011111b,19,24,52,53
-	drawbox 00111111b,18,19,51,54
+	drawbox 11101111b,18,24,35,36
+	drawbox 10101111b,17,18,34,37
 
 
-	drawbox 10011111b,23,24,65,67
+
+	drawbox 11101111b,19,24,52,53
+	drawbox 10101111b,18,19,51,54
+
+
+	drawbox 10101111b,23,24,65,67
 	ret
 
 display3 endp
@@ -1467,7 +1558,7 @@ push dx
 
 mov cx,1000
 mydelay:
-mov bx,200      ;; increase this number if you want to add more delay, and decrease this number if you want to reduce delay.
+mov bx,100      ;; increase this number if you want to add more delay, and decrease this number if you want to reduce delay.
 mydelay1:
 dec bx
 jnz mydelay1
@@ -1668,4 +1759,4 @@ endline proc
 endline endp
 
 end main
-
+;The end 
