@@ -57,20 +57,31 @@ mov en1c2,23
 
 
 
-	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+;	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
 dec en1c1	
 sub en1c2,2	
 dec en1r1	
 inc en1r2
 	
-	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
+;	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
 add en1c1,3
 add en1c2,3
 sub en1r2,3	
 	
 	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2	;left leg
-add en1r1,3
-add en1r2,3	
+add en1r1,1
+add en1r2,1	
+dec en1c1
+dec en1c2
+	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2	;left leg
+add en1r1,1
+add en1r2,1	
+	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2	;left leg
+add en1r1,1
+add en1r2,1	
+inc en1c1
+inc en1c2	
+	
 	
 	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2	;right leg
 
@@ -89,24 +100,33 @@ mov en1c2,23
 
 
 
-	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+;	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
 dec en1c1	
 sub en1c2,2	
 dec en1r1	
 inc en1r2
 	
-	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
+;	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
 add en1c1,3
 add en1c2,3
 sub en1r2,3	
 	
 	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2	;left leg
-add en1r1,3
-add en1r2,3	
+add en1r1,1
+add en1r2,1	
+dec en1c1
+dec en1c2
+	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2	;left leg
+add en1r1,1
+add en1r2,1	
+	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2	;left leg
+add en1r1,1
+add en1r2,1	
+inc en1c1
+inc en1c2	
+	
 	
 	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2	;right leg
-
-
 
 endm
 
@@ -1254,8 +1274,9 @@ int 10h
 mov ah,02
 mov bh,0
 mov dh,12
+mov dl,27
 add dl,lengthof msg
-inc dl
+
 
 
 int 10h
