@@ -1,4 +1,4 @@
  NAME                    SCORE
 
  MANNAN                    50 ABDULLAH                  60 AHAD                      90 ABDULLAH                  50 ABDULLAH                  60 MANNAN                    90 MANNAN                    90 CHUGHTAI                 120 ABD                       50
- AHAD BUTT                 50 MANNU                     50 ABDULLAH AKRAM            60 
+ AHAD BUTT                 50 MANNU                     50 ABDULLAH AKRAM            60 ABDULLAH                  10 ABDUL MANNAN              40 RANDOM                     0 SHERLOCK                  50 JOHN                      50 CLAY                      40 STARK                      0
