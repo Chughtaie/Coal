@@ -1,0 +1,4 @@
+ NAME                    SCORE
+
+ MANNAN                    50 ABDULLAH                  60 AHAD                      90 ABDULLAH                  50 ABDULLAH                  60 MANNAN                    90 MANNAN                    90 CHUGHTAI                 120 ABD                       50
+ AHAD BUTT                 50 MANNU                     50 ABDULLAH AKRAM            60 
