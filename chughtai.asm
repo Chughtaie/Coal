@@ -57,20 +57,31 @@ mov en1c2,23
 
 
 
-	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+;	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
 dec en1c1	
 sub en1c2,2	
 dec en1r1	
 inc en1r2
 	
-	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
+;	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
 add en1c1,3
 add en1c2,3
 sub en1r2,3	
 	
 	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2	;left leg
-add en1r1,3
-add en1r2,3	
+add en1r1,1
+add en1r2,1	
+dec en1c1
+dec en1c2
+	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2	;left leg
+add en1r1,1
+add en1r2,1	
+	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2	;left leg
+add en1r1,1
+add en1r2,1	
+inc en1c1
+inc en1c2	
+	
 	
 	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2	;right leg
 
@@ -89,24 +100,33 @@ mov en1c2,23
 
 
 
-	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
+;	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2
 dec en1c1	
 sub en1c2,2	
 dec en1r1	
 inc en1r2
 	
-	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
+;	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2
 add en1c1,3
 add en1c2,3
 sub en1r2,3	
 	
 	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2	;left leg
-add en1r1,3
-add en1r2,3	
+add en1r1,1
+add en1r2,1	
+dec en1c1
+dec en1c2
+	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2	;left leg
+add en1r1,1
+add en1r2,1	
+	drawbox 01001101b,en1c1,en1c2,en1r1,en1r2	;left leg
+add en1r1,1
+add en1r2,1	
+inc en1c1
+inc en1c2	
+	
 	
 	drawbox 11011101b,en1c1,en1c2,en1r1,en1r2	;right leg
-
-
 
 endm
 
@@ -224,6 +244,7 @@ en1r2 db 0
 
 er1 db 21
 er2 db 22
+bol db 1
 
 eer1 db 48
 eer2 db 49
@@ -231,13 +252,13 @@ eer2 db 49
 en1c1 db ?
 en1c2 db ?
 counte1 db 0
-countee1 db 0
+countee1 db 1
 countee2 db 0
 counte2 db 0
 countb1 db 0
 countb2 db 0
-	msg db "CONGRATS!!! YOU WON$"
-	msglost db "YOU LOST!!!LOSER...$"
+	msg db "CONGRATS!!! YOU WON, $"
+	msglost db "YOU LOST, $"
 	enterr db "ENTER YOUR NAME : $"
 	welcome db "WELCOME TO SUPER MARIO$"
 	press db "Press any key to contine...$"
@@ -313,6 +334,7 @@ l1:
 	.if ah==-1
 		jmp exit
 	.elseif or2 >75
+	call flagging
 		call main2
 	.endif
 	jmp l1
@@ -345,6 +367,7 @@ int 21h
 
 
 call clearscreen
+call draw_border
 mov ah,06
 mov al,0
 ;mov cx,0
@@ -492,6 +515,7 @@ l2:
 	.if ah==-1
 		jmp exit2	
 	.elseif or2 >75
+	call flagging
 		call main3
 	.endif
 
@@ -602,7 +626,7 @@ bigenemymov proc
 	add bh,2
 	.if (sc2>=al && sr1>=bl && sr1<=bh) 
 		call delay
-		call delay
+		;call delay
 		call endgame
 	.endif
 ;-----------END SHOOOTING-----------------------
@@ -861,6 +885,18 @@ lea dx,msglost
 mov ah,09
 int 21h
 
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,10
+mov dl,40
+int 10h
+lea dx,namee
+mov ah,09
+int 21h
+
+
 .if lvl==2
 mov lvlstr,"2"
 .endif
@@ -879,6 +915,8 @@ int 10h
 lea dx,lostlvl
 mov ah,09
 int 21h
+
+
 
 
 mov bh,10001101b
@@ -1008,9 +1046,11 @@ add marior2,3
 	.if lvl==2 || lvl==3
 		call enemymov
 	.endif
-	.if lvl==1 || lvl==3
+	.if  lvl==3
 		call bigenemymov
 	.endif
+call collision
+
 call delay
 call show
 ret
@@ -1147,7 +1187,7 @@ Show proc
 	.if lvl==2 || lvl==3
 		call enemymov
 	.endif
-	.if lvl==1 || lvl==3
+	.if  lvl==3
 		call bigenemymov
 	.endif
 		call showscore
@@ -1164,34 +1204,41 @@ collision proc
 mov al,er2
  mov cl,eer1
  mov dl,eer2
- 
- 
-	.if bl == or1 || al==or1 || cl == or1 || dl==or1
+
+	.if (bl == or1 || al==or1 || cl == or1 || dl==or1) &&  oc1>=21
 		call endgame
 	
 	.endif
 	sub bl,1
 	sub al,1
-	.if bl == or1 || al==or1 || cl == or1 || dl==or1
+	sub cl,1
+	sub dl,1
+	.if (bl == or1 || al==or1 || cl == or1 || dl==or1) &&  oc1>=21
 		call endgame
 	
 	.endif
 	add bl,2
 	add al,2
-	.if bl == or1 || al==or1 || cl == or1 || dl==or1
+	add cl,2
+	add dl,2
+	.if (bl == or1 || al==or1 || cl == or1 || dl==or1) &&  oc1>=21
 	
 		call endgame
 	
 	.endif
 	add bl,1
-	add bl,1
-	.if bl == or1 || al==or1 || cl == or1 || dl==or1
+	add al,1
+	add cl,1
+	add dl,1
+	.if (bl == or1 || al==or1 || cl == or1 || dl==or1) &&  oc1>=21
 		call endgame
 	
 	.endif
 	sub bl,4
 	sub al,4
-	.if bl == or1  || al==or1
+	sub cl,4
+	sub dl,4
+	.if (bl == or1  || al==or1 || cl == or1 || dl==or1) &&  oc1>=21
 		call endgame
 	.endif
 .endif
@@ -1215,9 +1262,25 @@ int 10h
 mov ah,02
 mov bh,0
 mov dh,12
-mov dl,30
+mov dl,27
 int 10h
 lea dx,msg
+mov ah,09
+int 21h
+
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,12
+mov dl,27
+add dl,lengthof msg
+
+
+
+int 10h
+lea dx,namee
 mov ah,09
 int 21h
 
@@ -1281,13 +1344,97 @@ wingame endp
 
 
 
+flagging proc
+mov bol,0
+
+.if lvl==1
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+drawbox 10101111b,5,8,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+drawbox 10101111b,8,11,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+drawbox 10101111b,11,14,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+
+drawbox 10101111b,14,17,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+drawbox 10101111b,17,21,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+drawbox 10101111b,21,24,66,77
+.endif
+
+
+.if lvl==2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+	drawbox 01011111b,2,5,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+	drawbox 01011111b,5,8,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+	drawbox 01011111b,8,11,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+
+	drawbox 01011111b,11,14,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+	drawbox 01011111b,14,17,66,77
+call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+	drawbox 01011111b,17,21,66,77
+	call delay2
+call clearscreen
+call displayl1
+drawm oc1,oc2,or1,or2
+	drawbox 01011111b,21,24,66,77
+.endif
+
+
+
+mov bol,1
+ret
+flagging endp
+
+
 
 displayl1 proc
 
 	;flag
+	
 	drawbox 11111111b,2,24,78,78
+.if bol==1
 	drawbox 10101111b,2,5,66,77
- 
+ .endif
  
 		;obstacles
 	drawbox 01001111b,19,24,18,19
@@ -1314,8 +1461,9 @@ displayl1 endp
 display2 proc
 ;flag
 	drawbox 01111111b,2,24,78,78
+	.if bol==1
 	drawbox 01011111b,2,5,66,77
- 
+ .endif
  
 		;obstacles
 	drawbox 10011111b,19,24,18,19
@@ -1348,19 +1496,19 @@ display3 proc
 	drawbox 11001111b,18,24,72,74
   
 		;obstacles
-	drawbox 10011111b,19,24,18,19
-	drawbox 00111111b,18,19,17,20
+	drawbox 11101111b,19,24,18,19
+	drawbox 10101111b,18,19,17,20
 
-	drawbox 10011111b,18,24,35,36
-	drawbox 00111111b,17,18,34,37
-
-
-
-	drawbox 10011111b,19,24,52,53
-	drawbox 00111111b,18,19,51,54
+	drawbox 11101111b,18,24,35,36
+	drawbox 10101111b,17,18,34,37
 
 
-	drawbox 10011111b,23,24,65,67
+
+	drawbox 11101111b,19,24,52,53
+	drawbox 10101111b,18,19,51,54
+
+
+	drawbox 10101111b,23,24,65,67
 	ret
 
 display3 endp
@@ -1429,7 +1577,7 @@ push dx
 
 mov cx,1000
 mydelay:
-mov bx,200      ;; increase this number if you want to add more delay, and decrease this number if you want to reduce delay.
+mov bx,100      ;; increase this number if you want to add more delay, and decrease this number if you want to reduce delay.
 mydelay1:
 dec bx
 jnz mydelay1
@@ -1465,9 +1613,29 @@ box proc
 box endp
 
 clearscreen proc
+	comment&
 	mov al,03
 	mov ah,0
+	mov bh,10111101b
+	mov cl,20
+	mov ch,0
 	int 10h
+	&
+	 mov ah,6
+ mov al,0
+ mov bh,11110001b
+ ;mov bh,10000000b
+ mov cl,0
+ mov ch,0
+ mov dh,70;Down
+ mov dl,80;Right
+ int 10h
+
+ 
+;Bringing Msg in Middle
+;mov bh,00101010b
+	mov bh,10111101b
+int 10h
 	ret
 clearscreen endp
 
@@ -1506,14 +1674,14 @@ clearreg proc
 clearreg endp
 draw_border proc
 
-	call clearscreen
 
 	;-------left side----------
 
 
-	mov Row_poistion, 18
-	mov Column_poistion,10
-	
+	mov Row_poistion, 9
+	mov Column_poistion,20
+		mov count,0
+
 
 
 	left:
@@ -1537,7 +1705,7 @@ draw_border proc
 	;-------right side----------
 
 	mov Row_poistion, 9
-	mov Column_poistion, 45
+	mov Column_poistion, 49
 
 	mov count,0
 	right:
@@ -1563,8 +1731,8 @@ draw_border proc
 
 	;-------top side-----------
 
-	mov Row_poistion, 8			;row on dosbox
-	mov Column_poistion, 28		;column on dosbox
+	mov Row_poistion, 9		;row on dosbox
+	mov Column_poistion, 22		;column on dosbox
 	
 	mov count,0
 	top:
@@ -1584,13 +1752,13 @@ draw_border proc
 		int 10h
 		add Column_poistion,1
 	
-		cmp	count,18
+		cmp	count,25
 		jbe top
 
 	;-------bottom side----------
 
-	mov Row_poistion, 12
-	mov Column_poistion, 28
+	mov Row_poistion, 11
+	mov Column_poistion, 22
 
 	mov count,0
 
@@ -1609,7 +1777,7 @@ draw_border proc
 		int 10h
 		add Column_poistion,1
 		
-		cmp	count,18
+		cmp	count,25
 		jbe bottom
 
 	;--------------------------------------
@@ -1630,4 +1798,4 @@ endline proc
 endline endp
 
 end main
-
+;The end 
