@@ -3,7 +3,6 @@
 
 shoot macro ;a,b,c,d,p
 
-
 	drawbox 10111101b,sc1,sc2,sr1,sr2	;middle body
 	;call delay
 endm
@@ -264,6 +263,7 @@ countb2 db 0
 	press db "Press any key to contine...$"
 	yourscore db "YOUR SCORE: $"
 	
+handle dw ?	
 bc1 db 3
 bc2 db 4
 br1 db 65	
@@ -291,9 +291,18 @@ lostlvl db "LEVEL:$"
 scr db " $"
 zero db " $"
 abszero db "0$"
-	
+
+endll db '13$'
+
 Row_poistion db 0     ;SET ROW 
 Column_poistion db 0
+
+file db "scores.txt",0
+er db "Error!",10,13d,'$'
+
+
+
+
 .code
   
   
@@ -315,6 +324,7 @@ call clearscreen
 drawbox 10111101b,25,26,4,8
 
 	call clearscreen
+	
 	call displayl1
 	drawm oc1,oc2,or1,or2
 	
@@ -345,7 +355,7 @@ LOL:
 	;Gotoxy 0,0
 	;character
 
-
+call filing
 
 MOV AH,4CH
 INT 21h
@@ -499,18 +509,19 @@ mov or2,5
 	call display2
 	drawm oc1,oc2,or1,or2
 	
-	
 
+	
 	
 l2:
 
 	
-	mov ah,1
-	int 16h
 	
-	; jz l1
-	mov ah,0
-	int 16h
+	mov ah,1
+		int 16h
+
+		mov ah,0
+		int 16h
+	
 	call move
 	.if ah==-1
 		jmp exit2	
@@ -527,6 +538,7 @@ LOL2:
 	;Gotoxy 0,0
 	;character
 
+call filing
 
 
 MOV AH,4CH
@@ -575,6 +587,7 @@ mov or2,5
 	
 exit3:	
 LOL3:
+
 
 MOV AH,4CH
 INT 21h
@@ -985,6 +998,7 @@ mov dl,30
 int 10h 
 
 
+call filing
 
 
 
@@ -1337,6 +1351,9 @@ mov dh,12
 mov dl,30
 int 10h 
 
+call filing
+
+
 ret
 
 
@@ -1431,11 +1448,12 @@ displayl1 proc
 
 	;flag
 	
+	
+	
 	drawbox 11111111b,2,24,78,78
 .if bol==1
 	drawbox 10101111b,2,5,66,77
  .endif
- 
 		;obstacles
 	drawbox 01001111b,19,24,18,19
 	drawbox 11101111b,18,19,17,20
@@ -1449,7 +1467,7 @@ displayl1 proc
 
 
 	drawbox 11101111b,23,24,65,67
-		
+	
 
 	ret
 	;---------------------------------
@@ -1765,6 +1783,71 @@ draw_border proc
 ret
 draw_border endp
 
+
+filing proc
+
+mov si,0
+.while si<=29
+.if namee[si]=='$'|| namee[si]==10d || namee[si]==13d
+mov namee[si],' '
+.endif
+inc si
+.endw
+
+mov ah,abszero[0]
+mov namee[27],ah
+mov ah,scr[0]
+mov namee[26],ah
+mov ah,zero[0]
+mov namee[25],ah
+mov ah,13d
+mov namee[28],ah
+
+
+mov ah,3dh	;opens
+mov dx,offset file
+mov al,2
+int 21h
+
+mov handle,ax
+jc eror
+
+mov bx,handle
+mov cx,0
+mov dx,0
+mov ah,42h ; Move file pointer
+mov al,02h ; End of File
+int 21h
+
+mov ah,40h	;appending
+mov bx,handle
+mov cx,lengthof namee
+lea dx,namee
+int 21h
+
+jc eror
+
+
+mov bx,handle
+mov ah,3eh
+int 21h
+
+
+jmp endd
+eror:
+mov ah,9h
+mov dx,offset er
+int 21h
+
+endd:
+
+
+
+
+
+
+ret
+filing endp
 
 
 
