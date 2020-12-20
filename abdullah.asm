@@ -248,6 +248,8 @@ bol db 1
 eer1 db 48
 eer2 db 49
 
+STAR DB "C*$"
+
 en1c1 db ?
 en1c2 db ?
 counte1 db 0
@@ -1453,6 +1455,22 @@ displayl1 proc
 	drawbox 11111111b,2,24,78,78
 .if bol==1
 	drawbox 10101111b,2,5,66,77
+		mov ch,0	;c1
+mov cl,0	;r1
+mov dh,00	;c1
+mov dl,9	;r2
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,03 ;c
+mov dl,70 ;
+int 10h
+lea dx,STAR
+mov ah,09
+int 21h
+
  .endif
 		;obstacles
 	drawbox 01001111b,19,24,18,19
@@ -1468,6 +1486,7 @@ displayl1 proc
 
 	drawbox 11101111b,23,24,65,67
 	
+	
 
 	ret
 	;---------------------------------
@@ -1478,9 +1497,26 @@ displayl1 endp
 
 display2 proc
 ;flag
+	
 	drawbox 01111111b,2,24,78,78
 	.if bol==1
 	drawbox 01011111b,2,5,66,77
+		mov ch,0	;c1
+mov cl,0	;r1
+mov dh,00	;c1
+mov dl,9	;r2
+
+mov bh,10001101b
+int 10h
+mov ah,02
+mov bh,0
+mov dh,03 ;c
+mov dl,70 ;
+int 10h
+lea dx,STAR
+mov ah,09
+int 21h
+
  .endif
  
 		;obstacles
@@ -1497,6 +1533,10 @@ display2 proc
 
 
 	drawbox 10011111b,23,24,65,67
+	
+
+	
+	
 	ret
 	;---------------------------------
 	
