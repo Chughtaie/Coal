@@ -1,3 +1,3 @@
 # Assembly Language
-# Mario Game
+## Mario Game
 Group Project
